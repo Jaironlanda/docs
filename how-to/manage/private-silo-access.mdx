@@ -1,0 +1,131 @@
+---
+title: 'Private Silo'
+description: 'Guide on how to manage a private silo'
+---
+
+## Introduction
+
+This page is a guide on how to manage a private silo, how to use it in your project, and some basic use cases that you can do with it.
+
+#### Use Case
+
+- Retriving  a simple JSON data through server side instead of client side
+- Cache data
+
+**Default Endpoint**
+
+```
+https://api.jsonsilo.com/
+```
+
+**Region-Based Endpoints**
+
+```
+https://[region-code].jsonsilo.com/
+```
+
+| Region | Code | Example | Free Plan | Paid Plan |
+|--------|------|---------|-----------|-----------|
+| Germany (Dusseldorf)| `api` | `https://api.jsonsilo.com/` | ✅ | ✅ |
+| Singapore | `sg-01-api` | `https://sg-01-api.jsonsilo.com/` | ❌ | ✅ |
+| United States (Central) | `usc-01-api` | `https://usc-01-api.jsonsilo.com/` | ❌ | ✅ |
+
+### Basic usage
+
+<CodeGroup>
+```curl CLI (cURL)
+curl -X GET \
+    -H 'X-SILO-KEY: YOUR_API_KEY' \
+    -H 'Content-Type: application/json' \
+    https://api.jsonsilo.com/4df8d9d5-38cc-49e5-9f08-15d2819742fb
+```
+
+```python main.py (Python)
+ # pip install requests
+
+  import requests 
+
+  url = 'https://api.jsonsilo.com/4df8d9d5-38cc-49e5-9f08-15d2819742fb'
+    headers = {
+      'X-SILO-KEY': 'YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    }
+  response = requests.get(url, headers=headers)
+  print(response.text)
+```
+
+```javascript main.js (JavaScript)
+ // npm install axios
+
+  const url = 'https://api.jsonsilo.com/4df8d9d5-38cc-49e5-9f08-15d2819742fb';
+  const headers = {
+      'X-SILO-KEY': 'YOUR_API_KEY',
+      'Content-Type': 'application/json'
+  };
+
+  axios.get(url, { headers: headers })
+  .then(response => {
+      console.log(response.data);
+  })
+  .catch(error => {
+      console.error('There was an error with the request:', error);
+  });
+```
+</CodeGroup>
+
+## Access Key
+
+Access Key is crucial for accessing a private silo.
+
+<img
+  className="rounded"
+  src="/images/manage-silo/manage-1.png"
+  alt="JSONsilo"
+/>
+
+To generate a new access key:
+
+1. From the sidebar menu, click `Keys` > `Access Key`.
+2. Click the `+ Add` button to generate a new key.
+
+### Create Access Key
+
+<img
+  className="rounded"
+  src="/images/manage-silo/manage-2.png"
+  alt="JSONsilo"
+/>
+
+Key names are optional. If you leave it empty, the default name will be set to `Secret Key`.
+
+<img
+  className="rounded"
+  src="/images/manage-silo/manage-3.png"
+  alt="JSONsilo"
+/>
+
+
+
+### Revoke Access Key
+
+<Warning>Please ensure there are no silos using the key. Otherwise, the silo will be unreachable and cause an error in the application or service using the key to make requests.</Warning>
+
+To revoke the access key, go to the Keys page, select the key to revoke in the Access Key section, and click the Revoke action.
+
+<img
+  className="rounded"
+  src="/images/manage-silo/manage-4.png"
+  alt="JSONsilo"
+/>
+
+When you click the `Revoke` action, a confirmation message will appear, asking you to confirm the revocation of the selected key.
+
+<img
+  className="rounded"
+  src="/images/manage-silo/manage-5.png"
+  alt="JSONsilo"
+/>
+
+## Request Limit
+
+There is no request limit.

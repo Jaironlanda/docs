@@ -1,77 +1,82 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "JSONsilo.com",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/favicon-192x192.png",
+    "light": "/logo/favicon-192x192.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon-192x192.png",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
-    "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
-    }
+    "primary": "#262626",
+    "light": "#f0f5f4",
+    "dark": "#262626"
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:hello@jsonsilo.com"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "url": "https://console.jsonsilo.com"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "API Reference",
+      "icon": "code",
+      "url": "api-reference"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Changelog",
+      "icon": "palette",
+      "url": "changelog"
     }
   ],
+  "topAnchor": {
+    "name": "Guides"
+  },
   "navigation": [
     {
       "group": "Get Started",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "introduction"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "How to...",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "how-to/create-silo",
+        "how-to/view-silo",
+        "how-to/update-silo",
+        "how-to/delete-silo",
+        {
+          "group": "Manage",
+          "pages": [
+            "how-to/manage/public-silo-access",
+            "how-to/manage/private-silo-access",
+            "how-to/manage/region"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Resources",
+      "pages": [
+        "resources/examples"
       ]
     },
     {
       "group": "API Documentation",
       "pages": [
         "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "Changelog",
+      "pages": [
+        "changelog/product-update",
+        "changelog/breaking-change"
       ]
     },
     {
@@ -84,8 +89,8 @@
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://linkedin.com/company/mintlify"
+    "x": "https://x.com/jaironlanda",
+    "github": "https://github.com/jaironlanda",
+    "linkedin": "https://linkedin.com/jaironlanda"
   }
 }

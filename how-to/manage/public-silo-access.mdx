@@ -1,0 +1,86 @@
+---
+title: 'Public Silo'
+description: 'Guide on how to manage a public silo'
+---
+
+## Introduction
+
+This page is a guide on how to manage a public silo, how to use it in your project, and some basic use cases that you can do with it.
+
+#### Use Case
+
+- API mockups / Frontend data mockups.
+- Sharing JSON files (e.g., JSON configuration files, assets, raw data).
+
+### Endpoint
+
+**Default Endpoint**
+
+```
+https://api.jsonsilo.com/
+```
+
+**Region-Based Endpoints**
+
+```
+https://[region-code].jsonsilo.com/
+```
+
+| Region | Code | Example | Free Plan | Paid Plan |
+|--------|------|---------|-----------|-----------|
+| Germany (Dusseldorf)| `api` | `https://api.jsonsilo.com/` | ✅ | ✅ |
+| Singapore | `sg-01-api` | `https://sg-01-api.jsonsilo.com/` | ❌ | ✅ |
+| United States (Central) | `usc-01-api` | `https://usc-01-api.jsonsilo.com/` | ❌ | ✅ |
+
+### Basic usage
+
+<Warning>Please ensure that `/public/` is included; otherwise, it will assume a private silo.</Warning>
+
+<CodeGroup>
+```curl CLI (cURL)
+curl -X GET \
+    -H 'X-SILO-KEY: YOUR_API_KEY' \
+    -H 'Content-Type: application/json' \
+    https://api.jsonsilo.com/public/4df8d9d5-38cc-49e5-9f08-15d2819742fb
+```
+
+```python main.py (Python)
+ # pip install requests
+
+  import requests 
+
+  url = 'https://api.jsonsilo.com/public/4df8d9d5-38cc-49e5-9f08-15d2819742fb'
+    headers = {
+      'X-SILO-KEY': 'YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    }
+  response = requests.get(url, headers=headers)
+  print(response.text)
+```
+
+```javascript main.js (JavaScript)
+ // npm install axios
+
+  const url = 'https://api.jsonsilo.com/public/4df8d9d5-38cc-49e5-9f08-15d2819742fb';
+  const headers = {
+      'X-SILO-KEY': 'YOUR_API_KEY',
+      'Content-Type': 'application/json'
+  };
+
+  axios.get(url, { headers: headers })
+  .then(response => {
+      console.log(response.data);
+  })
+  .catch(error => {
+      console.error('There was an error with the request:', error);
+  });
+```
+</CodeGroup>
+
+## Access Key
+
+An access key is **NOT** required for a public silo
+
+## Request Limit
+
+There is no request limit.

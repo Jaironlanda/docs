@@ -1,33 +1,38 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Understand general concepts, response codes, and authentication strategies.'
+icon: star
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+> Note:
+> This document is under maintenance. 🚧
 
-## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Base URL
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://[region-code].jsonsilo.com/api/v1/
+```
+
+## Regions
+
+JSONsilo support up to 3 regions
+
+## Singapore Region Based URL
+
+**Regions name code list**
+
+<Note>Paid plan only able to use different region.</Note>
+
+If you are a legacy, basic, pro, or lifetime plan user, you can use the base URL based on your region.
+
+| Name| Code  | Example |
+|-----|-------|---------|
+| Germany | `api`  | `https://api.jsonsilo.com/api/v1/` |
+| Singapore| `sg-01-api`| `https://sg-01-api.jsonsilo.com/api/v1/` |
+| United States (Central)| `usc-01-api`| `https://usc-01-api.jsonsilo.com/api/v1/` |
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+## Response Code

@@ -1,0 +1,42 @@
+---
+title: 'Region'
+description: 'Guide on how to manage a silo region.'
+---
+
+## Introduction
+
+In this guide, we explain the concept of silo regions and region codes.
+
+## Regions
+
+JSONsilo is committed to delivering global availability, powering millions of requests daily to services and devices worldwide.
+
+### Asia
+| Region        | Code | Status       |
+|---------------|------|--------------|
+| Singapore     | `sg-01-api`   | Available    |
+| Japan         | N/A   | Coming Soon  |
+| India         | N/A   | Coming Soon  |
+| Malaysia      | N/A   | Coming Soon  |
+
+### Europe
+| Region        | Code | Status       |
+|---------------|------|--------------|
+| Germany: Düsseldorf | `api` | Available |
+
+### North America
+| Region        | Code | Status       |
+|---------------|------|--------------|
+| United States: Central | `usc-01-api` | Available |
+| United States: West    | US-West    | Coming Soon |
+
+## Change Region
+
+<Warning>Make sure there are no active requests from the application when changing the region. Otherwise, you will receive a `404` error once the region is updated.</Warning>
+<Warning>Once the region is updated, please make sure you use the correct base URL for the selected region.</Warning>
+
+To change the region, go to **Dashboard** > **[Select Silo]** > scroll to the bottom, and in the *Settings* section, click the `Manage` button to update your silo region.
+
+<img className="rounded" height="200" src="/images/manage-silo/region.png" />
+
+<img className="rounded" height="200" src="/images/view-silo/silo-setting-1.png" />
