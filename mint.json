@@ -95,5 +95,10 @@
     "x": "https://x.com/jaironlanda",
     "github": "https://github.com/jaironlanda",
     "linkedin": "https://linkedin.com/jaironlanda"
+  },
+  "analytics": {
+    "plausible": {
+        "domain": "docs.jsonsilo.com"
+    }
   }
 }
