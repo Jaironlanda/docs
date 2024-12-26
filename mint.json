@@ -82,9 +82,12 @@
     {
       "group": "Endpoint Examples",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/endpoint/create-silo",
+        "api-reference/endpoint/delete-silo",
+        "api-reference/endpoint/get-meta",
+        "api-reference/endpoint/get-silo",
+        "api-reference/endpoint/get-silo-list",
+        "api-reference/endpoint/patch-silo"
       ]
     }
   ],

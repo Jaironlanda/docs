@@ -1,72 +1,489 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "FastAPI",
+    "version": "0.1.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
+      "url": "https://api.jsonsilo.com"
+    },
     {
-      "bearerAuth": []
+      "url": "https://sg-01-api.jsonsilo.com"
+    },
+    {
+      "url": "https://usc-01-api.jsonsilo.com"
     }
   ],
   "paths": {
-    "/plants": {
+    "/api/v1/manage/silos": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": ["Manage"],
+        "summary": "Get All Silos",
+        "description": "API endpoint to list all user silos with pagination.",
+        "operationId": "get_all_silos_api_v1_manage_silos_get",
+        "security": [
+          {
+            "silo_api_key": []
+          }
+        ],
         "parameters": [
           {
-            "name": "limit",
+            "name": "page",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "required": false,
+            "description": "The page number to retrieve",
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "default": 1,
+              "title": "Page"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "properties":{
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "total_items": {
+                          "type": "integer",
+                          "title": "Total Items",
+                          "example": 1,
+                          "description": "The total number of silos"
+                        },
+                        "per_page": {
+                          "type": "integer",
+                          "title": "Per Page",
+                          "example": 25,
+                          "description": "The number of silos per page"
+                        },
+                        "page_no": {
+                          "type": "integer",
+                          "title": "Page No",
+                          "example": 1,
+                          "description": "The current page number"
+                        }
+                      }
+                    },
+                    "silos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties":{
+                          
+                          
+                          "file_name": {
+                            "type": "string",
+                            "example": "new db",
+                            "description": "Silo name. The silo name will not affect development or any sensitive aspects."
+                          },
+                          "file_uuid": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-12-07T12:52:28.094450+00:00",
+                            "description": "The date and time the silo was created in `UTC`."
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-12-07T12:52:28.094450+00:00",
+                            "description": "The date and time the silo was last updated in `UTC`."
+                          },
+                          "is_public": {
+                            "type": "boolean",
+                            "example": false,
+                            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
+                          },
+                          "region_name": {
+                            "type": "string",
+                            "example": "api",
+                            "description": "The region where your data will be stored."
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "204": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/manage/meta/{file_uuid}": {
+      "get": {
+        "tags": ["Manage"],
+        "summary": "Manage Get Meta Jsonfile",
+        "description": "API endpoint to get the metadata of a silo",
+        "operationId": "manage_get_meta_jsonfile_api_v1_manage_meta__file_uuid__get",
+        "security": [
+          {
+            "silo_api_key": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "file_uuid",
+            "in": "path",
+            "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file_name": {
+                      "type": "string",
+                      "example": "new db",
+                      "description": "Silo name. The silo name will not affect development or any sensitive aspects."
+                    },
+                    "file_uuid": {
+                      "type": "string",
+                      "format": "uuid",
+                      "example": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b",
+                      "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-12-07T12:52:28.094450+00:00",
+                      "description": "The date and time the silo was created in `UTC`."
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-12-07T12:52:28.094450+00:00",
+                      "description": "The date and time the silo was last updated in `UTC`."
+                    },
+                    "is_public": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
+                    },
+                    "region_name": {
+                      "type": "string",
+                      "example": "api",
+                      "description": "The region where your data will be stored."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404":{
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/manage/{file_uuid}": {
+      "get": {
+        "tags": ["Manage"],
+        "summary": "Manage Get Jsonfile",
+        "description": "API endpoint to get the `file_data` of a silo.",
+        "operationId": "manage_get_jsonfile_api_v1_manage__file_uuid__get",
+        "security": [
+          {
+            "silo_api_key": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "file_uuid",
+            "in": "path",
+            "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Uuid"
+            }
+          }
+        ],
+        "responses": {
+            "200": {
+            "description": "Successful Response",
+            "content": {
+                "application/json": {
+                  "schema": {
+                    "properties":{
+                      "data": {
+                        "anyOf": [
+                          {
+                            "items": {},
+                            "type": "array"
+                          },
+                          {
+                            "type": "object"
+                          }
+                        ],
+                        "description": "The data you want to store in the silo. It can be a JSON object or an array of objects.",
+                        "title": "File Data"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
           }
         }
       },
-      "post": {
-        "description": "Creates a new plant in the store",
+      "patch": {
+        "tags": ["Manage"],
+        "summary": "Manage Update Jsonfile Data",
+        "description": "API endpoint to update silo.",
+        "operationId": "manage_update_jsonfile_data_api_v1_manage__file_uuid__patch",
+        "security": [
+          {
+            "silo_api_key": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "file_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Uuid",
+              "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+            }
+          }
+        ],
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/JsonFilesBase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "file_name": {
+                      "type": "string",
+                      "example": "new db",
+                      "description": "Silo name. The silo name will not affect development or any sensitive aspects."
+                    },
+                    "file_uuid": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+                    },
+                    "region_name": {
+                      "type": "string",
+                      "example": "api",
+                      "description": "The region where your data will be stored."
+                    },
+                    "is_public": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
+                    },
+                    "file_data": {
+                      "anyOf": [
+                        {
+                          "items": {},
+                          "type": "array"
+                        },
+                        {
+                          "type": "object"
+                        }
+                      ],
+                      "description": "The data you want to store in the silo. It can be a JSON object or an array of objects.",
+                      "title": "File Data"
+                    },
+                    
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-12-07T12:52:28.094450+00:00",
+                      "description": "The date and time the silo was created in `UTC`."
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-12-07T12:52:28.094450+00:00",
+                      "description": "The date and time the silo was last updated in `UTC`."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "403":{ 
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Manage"],
+        "summary": "Manage Delete Jsonfile Data",
+        "description": "API endpoint to delete a silo",
+        "operationId": "manage_delete_jsonfile_data_api_v1_manage__file_uuid__delete",
+        "security": [
+          {
+            "silo_api_key": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "file_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Uuid",
+              "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/manage": {
+      "post": {
+        "tags": ["Manage"],
+        "summary": "Manage New Jsonfile",
+        "description": "API endpoint to create a new silo",
+        "operationId": "manage_new_jsonfile_api_v1_manage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JsonFilesBase"
               }
             }
           },
@@ -74,121 +491,199 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "properties": {
+                    "file_uuid": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "The Silo UUID, comprising 32 hexadecimal digits separated by 4 hyphens, totaling 36 characters."
+                    },
+                    "is_public": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
+                    },
+                    "file_name": {
+                      "type": "string",
+                      "example": "new db",
+                      "description": "Silo name. The silo name will not affect development or any sensitive aspects."
+                    },
+                    "region_name": {
+                      "type": "string",
+                      "example": "api",
+                        "description": "The region where your data will be stored."
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
           }
-        }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
+        },
+        "security": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "silo_api_key": []
           }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
+      "Body_upload_file_upload_post": {
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
           }
-        }
+        },
+        "type": "object",
+        "required": ["file"],
+        "title": "Body_upload_file_upload_post"
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "retrieveSilo": {
+
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "NoContent": {
+        "type": "object",
+        "title": "NoContent"
+      },
+      "JsonFilesBase": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "description": "Choose a name for your silo that is easy to remember and understand. Rest assured, the silo name will not affect development or any sensitive aspects.",
+            "title": "File Name"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+          "file_data": {
+            
+            "anyOf": [
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "object"
               }
-            }
+            ],
+            "description": "The data you want to store in the silo. It can be a JSON object or an array of objects.",
+            "title": "File Data"
+          },
+          "region_name": {
+            "type": "string",
+            "title": "Region Name",
+            "enum": ["api", "sg-01-api", "usc-01-api"],
+            "default": "api",
+            "description": "Choose the region where you want to store your data. The default region is `api`."
+          },
+          "is_public": {
+            "type": "boolean",
+            "title": "Is Public",
+            "default": false,
+            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
           }
-        ]
+        },
+        "type": "object",
+        "title": "JsonFilesBase"
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "Forbidden": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+          "detail": {
+            "type": "string",
+            "title": "Detail"
           }
-        }
+        },
+        "title": "Forbidden"
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "title": "NotFound"
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "api_key": {
+        "type": "apiKey",
+        "description": "",
+        "in": "header",
+        "name": "X-SILO-KEY"
+      },
+      "silo_api_key": {
+        "type": "apiKey",
+        "description": "The JSONSilo Manage API Key",
+        "in": "header",
+        "name": "X-MAN-API"
       }
     }
   }

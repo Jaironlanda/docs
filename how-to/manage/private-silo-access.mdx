@@ -12,13 +12,13 @@ This page is a guide on how to manage a private silo, how to use it in your proj
 - Retriving  a simple JSON data through server side instead of client side
 - Cache data
 
-**Default Endpoint**
+**Default Base URL**
 
 ```
 https://api.jsonsilo.com/
 ```
 
-**Region-Based Endpoints**
+**Region-Base URL**
 
 ```
 https://[region-code].jsonsilo.com/
@@ -39,6 +39,7 @@ curl -X GET \
     -H 'Content-Type: application/json' \
     https://api.jsonsilo.com/4df8d9d5-38cc-49e5-9f08-15d2819742fb
 ```
+
 
 ```python main.py (Python)
  # pip install requests
@@ -72,6 +73,12 @@ curl -X GET \
   });
 ```
 </CodeGroup>
+
+## Supported HTTP method
+
+<Note>Are you looking for an API to able **CREATE**, **READ**, **UPDATE**, and **DELETE**? <br /> [Check here](/api-reference/introduction)</Note>
+
+- **GET** only
 
 ## Access Key
 
