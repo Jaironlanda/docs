@@ -7,7 +7,7 @@ icon: star
 ## Base URL
 
 ```
-https://[region-code].jsonsilo.com/api/v1/
+https://[region-code].jsonsilo.com/api/v1/manage/
 ```
 
 ## Regions code list
@@ -37,9 +37,41 @@ All API requests should include your API key in an `X-MAN-API` or `x-man-api` HT
 x-man-api: API_KEY
 ```
 
+### Generate Manage API Key
+
+To generate or manage an API key, from the console screen, select Key from the drawer menu. This page will list all the keys, including the Access Key used to access the private silo.
+
+Please do not confuse the Access Key with the Manage Key.
+
+- **Access Key**: To access private silo
+- **Manage Key**: To mange silo via API
+
+#### Step 1: Create a new key
+
+<img className="rounded" height="200" src="/images/managekey/create-manage-key.png" />
+Click the `+Add` button to add a new key.
+
+#### Step 2: Generate Key
+<img className="rounded" height="200" src="/images/managekey/create-manage-key-1.png" />
+
+1. Enter a key name (this field is optional; the default value is Secret Key).
+2. Select the key duration. For the free plan, only 1 month is available. Upgrade your plan if you want to increase the key duration.
+3. Click the Create button to generate the new key.
+
+#### Step 3: Save Key
+<img className="rounded" height="200" src="/images/managekey/create-manage-key-2.png" />
+ 1. Generated secret key; Please save this secret key somewhere safe and accessible. For security reasons, you won't be able to view it again through your account.
+ 2. Copy the generated key.
+ 3. You can safely close the dialog once save the key.
+
+
+### Revoke Key
+To revoke the key, click the `Revoke` button. This will revoke your key and will affect any active silo currently using the key.
+
+
 #### Making a requests
 
-You can paste the command below into your terminal to run your first API request. Make sure to replace X-MAN-API with your secret API key.
+To revoke the key, click the `Revoke` button. Please ensure that no silos are using the key, as this will interrupt the operation of any silos using it.
 
 ```bash
 curl -X GET \
