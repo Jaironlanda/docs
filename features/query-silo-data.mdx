@@ -1,0 +1,391 @@
+---
+title: 'Query'
+description: 'Dynamically query silo data'
+---
+
+## Introduction
+
+JSONsilo now supports querying data from silos. This feature lets you dynamically retrieve and interact with silo data programmatically. By appending specific query parameters to your silo URL, you can extract precise information from your JSON data without needing to download or manually parse the entire dataset.
+
+> **This feature is currently supported only for <u>Private Silos</u>.**
+
+## Limitations
+
+While the query functionality is a powerful feature, it is still in its early stages and has some limitations:
+
+- Selecting specific indices or ranges based on index is limited.
+- Query performance may vary depending on the size and complexity of the silo data.
+- Only private silos are supported; public silos are not yet supported.
+
+
+# Usage
+
+Below are the available query parameters you can use:
+
+> **Note:** Ensure the parameters are in the correct order when combining them in a single request.
+
+- `idx`: Specifies the index of the item to retrieve.
+- `path`: Specifies the path to a specific field within the JSON data.
+- `output`: Specifies the desired output format or data type.
+
+## Parameters
+
+### `idx`
+
+The `idx` parameter stands for "index" and is used to retrieve a specific item from an array in your silo data. It is helpful when your silo data is an array of objects, and you want to access an object based on its position in the array.
+
+#### How It Works
+
+Suppose your silo data looks like this:
+
+
+```json data.json
+[
+  { "name": "John Doe", "age": 58 },
+  { "name": "Elon Musk", "age": 50 }
+]
+```
+
+You can use the `idx` parameter to specify which object you want to retrieve by its index (starting from `0`).
+
+To get the first object in the array (John Doe), you would use:
+
+```bash
+?idx=0
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?idx=0
+```
+
+Response:
+```json
+{
+  "name": "John Doe",
+  "age": 58
+}
+```
+
+> **Note:**
+>
+> - If you use `idx` on non-array data, the result will be `null`.
+> - You can combine the `idx` parameter with the `path` parameter for more advanced queries.
+
+---
+
+### `path`
+
+The `path` parameter lets you specify a path within the silo data to retrieve specific fields or nested data. This is useful for working with complex JSON structures that contain objects, arrays, or both.
+
+
+#### How It Works
+
+The `path` parameter uses dot notation to navigate through the JSON structure. Each segment separated by a dot (`.`) represents a key or index in the JSON object or array.
+
+Suppose your silo data looks like this:
+
+```json data.json
+{
+  "config": {
+  "backup": {
+    "enabled": true,
+    "maxBackups": 5,
+    "backupLocation": "/user/data/backups/"
+  },
+  "format": "json",
+  "autosave": true,
+  "filePath": "/user/data/saves/",
+  "compression": false,
+  "saveInterval": 300
+  }
+}
+```
+
+#### Retrieving a Specific Field
+
+To retrieve a specific field, you provide the path to that field using dot (`.`) notation.
+
+To retrieve the value of the `filePath` field, use the following URL:
+
+```bash
+?path=config.filePath
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=config.filePath
+```
+
+Response:
+```bash
+"/user/data/saves/"
+```
+
+#### Retrieving a Nested Object
+
+If you want to retrieve an entire nested object, you can specify the path to that object.
+
+To retrieve the entire `backup` object, use:
+
+```bash
+?path=config.backup
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=config.backup
+```
+
+Response:
+
+```json
+{
+  "enabled": true,
+  "maxBackups": 5,
+  "backupLocation": "/user/data/backups/"
+}
+```
+
+#### Accessing Array Elements
+
+If your `data.json` contains arrays, you can use numeric indices in the path. 
+
+For example:
+
+```json data.json
+{
+  "users": [
+    { "name": "Li Ming", "role": "admin" },
+    { "name": "Bob", "role": "user" }
+  ]
+}
+```
+
+To retrieve the name of the first user:
+
+```bash
+?path=users.0.name
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=users.0.name
+```
+
+Response:
+
+```text
+"Li Ming"
+```
+
+> #### Notes
+>
+> - The `path` parameter is case-sensitive and must match the exact structure of your data.
+> - If the specified path does not exist, the response will be `null` or return an error.
+> - You can combine the `path` parameter with other parameters (such as `idx` and `output`) for more advanced queries.
+
+### `output`
+
+<Warning>This parameter won't work without the `idx` and `path` parameters.</Warning>
+
+The `output` parameter lets you choose the format or data type of the response. By default, the API returns data in `json` format, but you can use the `output` parameter to convert the result to a format that fits your needs.
+
+#### How It Works
+
+Suppose your silo data looks like this:
+
+```json data.json
+{
+  "backup": {
+  "enabled": true,
+  "maxBackups": "5",
+  "backupLocation": "/user/data/backups/"
+  }
+}
+```
+
+To retrieve the value of `backup.enabled` as its default type (boolean), you would use:
+
+```bash
+?path=backup.enabled
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.enabled
+```
+
+Response:
+
+```text
+true
+```
+
+To convert the value of `backup.enabled` to a string, you would use:
+
+```bash
+?path=backup.enabled&output=text
+```
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.enabled&output=text
+```
+Response:
+
+```text
+"true"
+```
+
+---
+
+To retrieve the value of `backup.maxBackups` as its default type (string), you would use:
+
+```bash
+?path=backup.maxBackups
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.maxBackups
+``` 
+Response:
+
+```text
+"5"
+```
+
+To convert the value of `backup.maxBackups` to an integer, you would use:
+
+```bash
+?path=backup.maxBackups&output=int
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.maxBackups&output=int
+```
+
+Response:
+
+```text
+5
+```
+
+
+#### Supported Output Types
+
+| Output Type | Description |
+|-------------|-------------|
+| `text`      | Converts the result to a plain text string. |
+| `int`       | Converts the result to an integer, if possible. |
+| `float`     | Converts the result to a floating-point number, if possible. |
+| `bool`      | Converts the result to a boolean value. |
+| `date`      | `Not supported` |
+| `timestamp` | `Not supported` |
+
+
+> **Notes:**
+> - If the conversion is not possible (e.g., converting a non-numeric string to `int`), the API will return an error or `null`.
+> - The `output` parameter can be combined with `path` and `idx` for advanced queries.
+> - Ensure the data at the specified path is compatible with the requested output type.
+
+---
+
+### Combining `idx` and `path` Parameters
+
+You can combine the `idx` and `path` parameters to perform detailed queries on array-based JSON data. This is useful for selecting a specific item from an array and extracting a particular field from that item.
+
+#### How It Works
+
+Suppose your silo data looks like this:
+
+```json data.json
+[
+  {
+    "name": "John Doe",
+    "age": 58,
+    "contacts": {
+      "email": "john@example.com"
+    }
+  },
+  {
+    "name": "Jairon Landa",
+    "age": 29,
+    "contacts": {
+      "email": "jairon@example.com"
+    }
+  },
+  {
+    "name": "Elon Musk",
+    "age": 50,
+    "contacts": {
+      "email": "elon@example.com"
+    }
+  }
+]
+```
+
+#### Combine `idx` and `path`
+
+You can combine the `idx` and `path` parameters to perform detailed queries on array-based JSON data. This is useful for selecting a specific item from an array and extracting a particular field from that item.
+
+#### Basic Example
+
+Suppose you want to retrieve the `name` field from the object at index `1`:
+
+- Use `?idx=1` to select the second object in the array.
+- Use `&path=name` to extract the `name` field from that object.
+
+```bash
+?idx=1&path=name
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?idx=1&path=name
+```
+
+Response:
+```text
+"Jairon Landa"
+```
+
+#### Advanced Example: Nested Fields
+
+Suppose you want to retrieve a nested field, such as the `email` from the `contacts` object of the user at index `2`.
+
+- Use `?idx=2` to select the third object in the array.
+- Use `&path=contacts.email` to extract the `email` field from that object.
+
+```bash
+?idx=2&path=contacts.email
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?idx=2&path=contacts.email
+```
+
+Response:
+```text
+"elon@example.com"
+```
+
+> **Notes:**
+> - If the specified `idx` or `path` does not exist, the API will return `null`.
+> - The `path` parameter is case-sensitive and must match the exact structure of your data.
+> - You can combine `idx`, `path`, and `output` for advanced queries, such as converting the result to a specific type.
+>   - **Example**: `?idx=2&path=contacts.age&output=text`
+>   - **Output**: `"50"` (convert int to text)
+

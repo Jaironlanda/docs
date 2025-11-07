@@ -1,0 +1,53 @@
+---
+title: 'Rate Limits'
+description: 'Understanding JSONsilo rate limit'
+icon: road-barrier
+---
+
+# Introduction
+To ensure the stability and reliability of our platform, we have implemented rate limits across all API endpoints. These limits are designed to prevent abuse and ensure fair usage for all users. Below, you will find a detailed breakdown of the rate limits applied to each service.
+
+If you require higher rate limits or have specific use cases that exceed these thresholds, please contact our support team to discuss potential solutions or upgrades to your plan.
+
+## How Rate Limits Work
+
+Rate limits are measured in requests per time interval, such as per second or per minute, and are applied **per IP address**. For example:
+
+- **10,000 requests per 20 seconds**: You can make up to 10,000 API requests within a 20-second interval from a single IP address.
+- **20 requests per minute**: You can make up to 20 API requests within a single minute from a single IP address.
+
+Once the time interval resets (e.g., the next second or minute begins), your request count is automatically reset to zero, and you can make new requests up to the defined limit.
+
+If you exceed the rate limit within the specified time interval, you will receive a `429 Too Many Requests` response. In such cases, you should wait until the interval resets before making additional requests.
+
+
+## Free
+
+| Service          | Rate Limit       |
+|------------------|------------------|
+| Private          | 20 requests/min |
+| Public           | 20 requests/min |
+| Manage API       | 20 requests/min  |
+| Query            | 20 requests/min  |
+| Search           | 20 requests/min  |
+
+
+## Pro
+
+| Service          | Rate Limit              |
+|------------------|-------------------------|
+| Private          | 10,000 requests / 20 seconds |
+| Public           | 10,000 requests / 20 seconds |
+| Manage API       | 10,000 requests / 20 seconds |
+| Query            | 10,000 requests / 20 seconds |
+| Search           | 10,000 requests / 20 seconds |
+
+## Pro Plus & Lifetime
+
+| Service          | Rate Limit              |
+|------------------|-------------------------|
+| Private          | 20,000 requests / 20 seconds |
+| Public           | 20,000 requests / 20 seconds |
+| Manage API       | 20,000 requests / 20 seconds |
+| Query            | 20,000 requests / 20 seconds |
+| Search           | 20,000 requests / 20 seconds |

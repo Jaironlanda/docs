@@ -1,0 +1,38 @@
+For public silos, you can access the JSON file directly without any authentication headers.
+
+<CodeGroup>
+
+```bash Terminal
+curl -X GET \
+  -H 'Content-Type: application/json' \
+  https://[region-code].jsonsilo.com/public/[file-uuid]
+```
+
+```javascript main.js
+fetch('https://[region-code].jsonsilo.com/public/[file-uuid]', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+```
+
+```python main.py
+import requests
+
+url = 'https://[region-code].jsonsilo.com/public/[file-uuid]'
+headers = {
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(url, headers=headers)
+if response.status_code == 200:
+    print(response.json())
+else:
+    print('Error:', response.status_code)
+```
+
+</CodeGroup>

@@ -1,0 +1,278 @@
+---
+title: 'Query Silo'
+description: 'Dynamically query silo data'
+---
+
+<Note>This feature is currently supported only for private silos.</Note>
+
+## Introduction
+
+JSONsilo now supports querying data from silos. This feature lets you dynamically retrieve and interact with silo data programmatically. By appending specific query parameters to your silo URL, you can extract precise information from your JSON data without needing to download or manually parse the entire dataset.
+
+## Limitations
+
+While the query functionality is a powerful feature, it is still in its early stages and has some limitations:
+- Selecting specific indices or ranges based on index is limited.
+- Query performance may vary depending on the size and complexity of the silo data.
+- Only private silos are supported; public silos are not yet supported.
+
+## Usage
+To query data from your private silo, you need to add specific query parameters to your silo URL. These parameters allow you to retrieve data dynamically based on your requirements.
+
+
+## Parameters
+
+### Index Parameter (`idx`)
+
+The `idx` parameter specifies the zero-based index of the item you want to retrieve from an array. This is suitable for JSON data structured as an array of objects. 
+
+For example, if your silo data is:
+
+```json
+[
+  { "name": "John Doe", "age": 58 },
+  { "name": "Elon Musk", "age": 50 }
+]
+```
+    
+To retrieve specific data from the array—for example, John Doe's data—add the  
+`?idx=[INDEX_NUMBER]` parameter to the private silo URL.
+
+For instance:
+
+```
+GET https://api.jsonsilo.com/your-silo-uuid?idx=0
+```
+
+This query will return the first object in the array:
+
+```json
+{
+  "name": "John Doe",
+  "age": 58
+}
+```
+
+> **Note:**
+>
+> - If you attempt to use `idx` on a JSON object or any non-array data, the result will be `null`.
+> - You can combine the `idx` parameter with `path` parameter for more advanced queries.
+
+
+### Path Parameter (`path`)
+
+The `path` parameter allows you to specify a particular path within the silo data, enabling you to retrieve nested or specific fields from complex JSON structures. This is especially useful when your data contains objects within objects or arrays, and you only need a subset of the information.
+
+#### How It Works
+
+    The `path` parameter uses dot notation to traverse the JSON structure. Each segment separated by a dot (`.`) represents a key or index in the JSON object or array.
+
+    #### Example: Retrieving a Simple Field
+
+    Suppose your silo data looks like this:
+
+    ```json
+    {
+      "config": {
+      "backup": {
+        "enabled": true,
+        "maxBackups": 5,
+        "backupLocation": "/user/data/backups/"
+      },
+      "format": "json",
+      "autosave": true,
+      "filePath": "/user/data/saves/",
+      "compression": false,
+      "saveInterval": 300
+      }
+    }
+    ```
+
+    To retrieve the value of the `filePath` field, use the following URL:
+
+    `?path=config.filePath`
+
+    ```url
+    https://api.jsonsilo.com/5ae348ba-7413-45fc-b0f4-35ed890440d1?path=config.filePath
+    ```
+
+    **Response:**
+    ```text
+    "/user/data/saves/"
+    ```
+
+    #### Example: Retrieving a Nested Object
+
+    To get the entire `backup` object within `config`, use:
+
+    `?path=config.backup`
+
+    ```url
+    https://api.jsonsilo.com/5ae348ba-7413-45fc-b0f4-35ed890440d1?path=config.backup
+    ```
+
+    **Response:**
+    ```json
+    {
+      "enabled": true,
+      "maxBackups": 5,
+      "backupLocation": "/user/data/backups/"
+    }
+    ```
+
+    #### Example: Accessing Array Elements
+
+    If your data contains arrays, you can use numeric indices in the path. For example, given:
+
+    ```json
+    {
+      "users": [
+      { "name": "Li Ming", "role": "admin" },
+      { "name": "Bob", "role": "user" }
+      ]
+    }
+    ```
+
+    To retrieve the name of the first user:
+
+    `?path=users.0.name`
+
+    ```url
+    https://api.jsonsilo.com/5ae348ba-7413-45fc-b0f4-35ed890440d1?path=users.0.name
+    ```
+
+    **Response:**
+    ```text
+    "Li Ming"
+    ```
+
+   > #### Notes
+   >
+   > - The `path` parameter is case-sensitive and must match the exact structure of your data.
+   > - If the specified path does not exist, the response will be `null` or an error.
+   > - You can combine the `path` parameter with other parameters (such as `idx`, and `output`) for more advanced queries.
+
+3. **Output Parameter (`output`)**  
+  The `output` parameter lets you specify the desired format or data type of the response. By default, the API returns data in the `jsonb` format, but you can use the `output` parameter to convert the result to a different type that best fits your use case.
+
+    **Example Silo Data:**
+    ```json
+    {
+      "backup": {
+      "enabled": true,
+      "maxBackups": "5",
+      "backupLocation": "/user/data/backups/"
+      }
+    }
+    ```
+
+    **Usage Examples:**
+
+    - To retrieve the value of `backup.enabled` as its default type:
+      - **Parameter:** `?path=backup.enabled`
+      - **Output:** `true` (boolean)
+
+    - To retrieve the value of `backup.maxBackups` as its default type:
+      - **Parameter:** `?path=backup.maxBackups`
+      - **Output:** `"5"` (string)
+
+    - To convert the value of `backup.enabled` to `text`:
+      - **Parameter:** `?path=backup.enabled&output=text`
+      - **Output:** `"true"` (string)
+
+    - To convert the value of `backup.maxBackups` to an `int`:
+      - **Parameter:** `?path=backup.maxBackups&output=int`
+      - **Output:** `5` (int)
+
+    **Supported Output Types:**
+
+    | Output Type | Description |
+    |-------------|-------------|
+    | `text`      | Converts the result to a plain text string. |
+    | `int`       | Converts the result to an integer, if possible. |
+    | `float`     | Converts the result to a floating-point number, if possible. |
+    | `bool`      | Converts the result to a boolean value. |
+    | `date`      | `Not supported` |
+    | `timestamp` | `Not supported` |
+
+    > **Notes:**
+    > - If the conversion is not possible (for example, converting a non-numeric string to `int`), the API will return an error or `null`.
+    > - The `output` parameter can be combined with `path` and `idx` for more advanced queries.
+    > - Always ensure the data at the specified path is compatible with the output type you request.
+
+
+    ### Combining `idx` and `path` Parameters
+
+    You can combine the `idx` and `path` parameters to perform more granular queries on array-based JSON data. This is useful when you want to select a specific item from an array and then extract a particular field from that item.
+
+    #### Example Data
+
+    ```json
+    [
+      {
+        "name": "John Doe",
+        "age": 58,
+        "contacts": {
+          "email": "john@example.com"
+        }
+      },
+      {
+        "name": "Jairon Landa",
+        "age": 29,
+        "contacts": {
+          "email": "jairon@example.com"
+        }
+      },
+      {
+        "name": "Elon Musk",
+        "age": 50,
+        "contacts": {
+          "email": "elon@example.com"
+        }
+      }
+    ]
+    ```
+
+    #### Example Query
+
+    Suppose you want to retrieve the `name` field from the object at index `1`:
+
+    - `?idx=1` selects the second object in the array.
+    - `&path=name` extracts the `name` field from that object.
+
+    ```url
+    https://api.jsonsilo.com/5ae348ba-7413-45fc-b0f4-35ed890440d1?idx=1&path=name
+    ```
+
+    **Response:**
+    ```text
+    "Jairon Landa"
+    ```
+
+    #### Advanced Example: Nested Fields
+
+    You can also use `path` to access nested fields within the selected array element. For example, to get the email address of the user at index `2`:
+
+    - `?idx=2&path=contacts.email`
+
+    ```url
+    https://api.jsonsilo.com/5ae348ba-7413-45fc-b0f4-35ed890440d1?idx=2&path=contacts.email
+    ```
+
+    **Response:**
+    ```text
+    "elon@example.com"
+    ```
+
+    > **Notes:**
+    > - If either the specified `idx` or `path` does not exist, the API will return `null`.
+    > - The `path` parameter is case-sensitive and must match the exact structure of your data.
+    > - You can combine `idx`, `path`, and `output` for even more advanced queries, such as converting the result to a specific type.   
+    > **Example**: `?idx=2&path=contacts.age&output=text`
+
+    ### Tips
+    - Always verify that the `idx` value is within the bounds of your array.
+    - Use dot notation in `path` to access nested objects or array elements.
+    - Combining parameters allows you to efficiently extract exactly the data you need from complex JSON structures.
+    - Invalid or out-of-range indices, or incorrect paths, may result in errors or `null` responses.
+

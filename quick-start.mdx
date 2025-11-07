@@ -1,0 +1,194 @@
+---
+title: Quick Start
+description: 'Get started quickly with JSONsilo'
+---
+
+Before you begin, ensure that you have a JSONsilo account. If you don't have one yet, [sign up here](https://console.jsonsilo.com/signup) and complete the onboarding process.
+
+During the onboarding process, you will be prompted to create and deploy your first JSON file to JSONsilo. Follow the instructions provided in the onboarding wizard to deploy your JSON.
+
+After completing the onboarding process and deploying your JSON file to JSONsilo, you will get a unique URL to access it. The URL format depends on whether your silo is private or public:
+
+<Note>Replace `[region-code]` with the appropriate region code for your silo, and `[file-uuid]` with the unique identifier assigned to your JSON file.</Note>
+
+#### Private Silo URL Format
+```bash
+https://[region-code].jsonsilo.com/[file-uuid]
+```
+
+#### Public Silo URL Format
+```bash
+https://[region-code].jsonsilo.com/public/[file-uuid]
+```
+
+### Supported Region Codes
+
+| Region Code   | Description            |
+|---------------|------------------------|
+| `api`         | General API region     |
+| `sg-01-api`   | Singapore region       |
+| `usc-01-api`  | US Central region      |
+
+For more details about supported regions, please refer to the [Regions Documentation](/how-to/manage/region).
+
+#### Retrieving your file uuid and region code
+
+To find your `file-uuid` and `region-code`, sign in to your JSONsilo console and navigate to the "Silos" and click one of your silos from the list.
+
+<img 
+  src="/images/quick-start/1.png" 
+  alt="quick start silo list"
+  className="rounded-lg"
+/>
+
+ Here, you will see the details of your silo, including the file UUID and the region where your silo is hosted.
+ 
+<img 
+  src="/images/quick-start/2.png" 
+  alt="quick start silo details"
+  className="rounded-lg"
+/>
+
+
+### Retrieving your Access Key for Private Silo
+
+To retrieve your Access Key for a private silo, go to the "Keys" menu in your JSONsilo console and click the `Manage` button.
+
+<img 
+  src="/images/quick-start/3.png" 
+  alt="quick start access key"
+  className="rounded-lg"
+/>
+
+
+Here, you can create a new Access key or view your existing keys. Click the `Create new Access Key` button to generate a new key if you don't have one yet.
+<img 
+  src="/images/quick-start/4.png" 
+  alt="quick start create access key"
+  className="rounded-lg"
+/>
+
+A dialog will appear to prompt you to enter a key name for your Access Key. After entering the name, click the `Create access key` button to generate the key.
+
+<img 
+  src="/images/quick-start/5.png" 
+  alt="quick start generated access key"
+  className="rounded-lg"
+/>
+
+After creating the Access Key, make sure to copy and save it securely, as you will need it to access your private silo.
+
+<img 
+  src="/images/quick-start/6.png" 
+  alt="quick start generated access key"
+  className="rounded-lg"
+/>
+
+<Warning>If you lose your Access Key, you can generate a new one by following the same steps. Make sure to revoke any old keys that you no longer use to keep your account secure.</Warning>
+
+
+### Accessing Your JSON File
+
+Below are examples of how to access your JSON file using the generated URL.
+
+<Tabs>
+  <Tab title="cURL" icon="terminal">
+    **Accessing a Private Silo**
+
+    To access a private silo, include your Access Key in the request headers. Use the `X-SILO-KEY` header to provide your Access Key.
+    
+    ```bash Terminal
+    curl -X GET \
+      -H 'X-SILO-KEY: <YOUR_X_SILO_KEY_HERE>' \
+      -H 'Content-Type: application/json' \
+      https://[region-code].jsonsilo.com/[file-uuid]
+    ```
+
+    **Accessing a Public Silo**
+    
+    For public silos, you can access the JSON file directly without any authentication headers.
+    
+    ```bash Terminal
+    curl -X GET \
+      -H 'Content-Type: application/json' \
+      https://[region-code].jsonsilo.com/public/[file-uuid]
+    ```
+  </Tab>
+  
+  
+  <Tab title="JavaScript" icon="code">
+
+    **Accessing a Private Silo**
+
+    To access a private silo, include your Access Key in the request headers. Use the `X-SILO-KEY` header to provide your Access Key.
+
+    ```javascript main.js
+    fetch('https://[region-code].jsonsilo.com/[file-uuid]', {
+      method: 'GET',
+      headers: {
+        'X-SILO-KEY': '<YOUR_X_SILO_KEY_HERE>',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+    ```
+
+    **Accessing a Public Silo**
+
+    For public silos, you can access the JSON file directly without any authentication headers.
+
+    ```javascript main.js
+    fetch('https://[region-code].jsonsilo.com/public/[file-uuid]', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+    ```
+  </Tab>
+  <Tab title="Python" icon="code">
+    **Accessing a Private Silo**
+
+    To access a private silo, include your Access Key in the request headers. Use the `X-SILO-KEY` header to provide your Access Key.
+
+    ```python main.py
+    import requests
+
+    url = 'https://[region-code].jsonsilo.com/[file-uuid]'
+    headers = {
+        'X-SILO-KEY': '<YOUR_X_SILO_KEY_HERE>',
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print('Error:', response.status_code)
+    ```
+
+    **Accessing a Public Silo**
+
+    For public silos, you can access the JSON file directly without any authentication headers.
+
+    ```python main.py
+    import requests
+
+    url = 'https://[region-code].jsonsilo.com/public/[file-uuid]'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print('Error:', response.status_code)
+    ```
+  </Tab>
+</Tabs>

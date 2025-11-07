@@ -4,79 +4,53 @@ description: 'Understand general concepts, response codes, and authentication st
 icon: star
 ---
 
-## Base URL
+## JSONSilo Manage API
 
-```
+The JSONSilo Manage API allows you to programmatically manage your JSON silos, including creating, updating, deleting silos, and managing files within those silos.
+
+### Base URL
+
+The base URL for the JSONSilo Manage API is structured as follows:
+
+```bash
 https://[region-code].jsonsilo.com/api/v1/manage/
 ```
 
-## Regions code list
+> Replace `[region-code]` with the appropriate region code for your silo, and `[file-uuid]` with the unique identifier assigned to your JSON file.
+> 
+> - [Retrieving your file uuid and region code](/quick-start#retrieving-your-file-uuid-and-region-code)
 
-<Note>Singapore and the United States regions are available only on paid plans.</Note>
+### Endpoints
 
-For more info about supported region, please [check here](/how-to/manage/region).
+The JSONSilo Manage API provides the following endpoints:
 
-| Name| Code  | Example |
-|-----|-------|---------|
-| Germany | `api`  | `https://api.jsonsilo.com/api/v1/` |
-| Singapore| `sg-01-api`| `https://sg-01-api.jsonsilo.com/api/v1/` |
-| United States (Central)| `usc-01-api`| `https://usc-01-api.jsonsilo.com/api/v1/` |
-
-
-## Authentication
-
-### API Keys
-
-The JSONSilo Manage API uses API keys for authentication. Every request to the API must include your API key, used to authenticate your requests.
-
-<Note>Remember that your API key is a secret. Do not share it with others or expose it in any client-side code (browsers, apps).</Note>
-
-All API requests should include your API key in an `X-MAN-API` or `x-man-api` HTTP header as follows:
-
-```bash
-x-man-api: API_KEY
-```
-
-### Generate Manage API Key
-
-To generate or manage an API key, from the console screen, select Key from the drawer menu. This page will list all the keys, including the Access Key used to access the private silo.
-
-Please do not confuse the Access Key with the Manage Key.
-
-- **Access Key**: To access private silo
-- **Manage Key**: To mange silo via API
-
-#### Step 1: Create a new key
-
-<img className="rounded" height="200" src="/images/managekey/create-manage-key.png" />
-Click the `+Add` button to add a new key.
-
-#### Step 2: Generate Key
-<img className="rounded" height="200" src="/images/managekey/create-manage-key-1.png" />
-
-1. Enter a key name (this field is optional; the default value is Secret Key).
-2. Select the key duration. For the free plan, only 1 month is available. Upgrade your plan if you want to increase the key duration.
-3. Click the Create button to generate the new key.
-
-#### Step 3: Save Key
-<img className="rounded" height="200" src="/images/managekey/create-manage-key-2.png" />
- 1. Generated secret key; Please save this secret key somewhere safe and accessible. For security reasons, you won't be able to view it again through your account.
- 2. Copy the generated key.
- 3. You can safely close the dialog once save the key.
+| Endpoint                     | Method | Description                                 |
+|------------------------------|--------|---------------------------------------------|
+| `/`                          | `POST`   | [Create a new silo](/api-reference/endpoint/create-silo)                         |
+| `/{file_uuid}`               | `DELETE` | [Delete a specific silo](/api-reference/endpoint/delete-silo)                    |
+| `/meta/{file_uuid}`          | `GET`    | [Retrieve metadata for a specific silo](/api-reference/endpoint/get-meta)     |
+| `/{file_uuid}`               | `GET`    | [Retrieve `file_data` for a specific silo](/api-reference/endpoint/get-silo)  |
+| `/silos`                     | `GET`    | [List all silos](/api-reference/endpoint/get-silo-list)                            |
+| `/{file_uuid}`               | `PATCH`  | [Update a specific silo](/api-reference/endpoint/patch-silo)                    |
 
 
-### Revoke Key
-To revoke the key, click the `Revoke` button. This will revoke your key and will affect any active silo currently using the key.
 
+### Authentication
 
-#### Making a requests
-
-To revoke the key, click the `Revoke` button. Please ensure that no silos are using the key, as this will interrupt the operation of any silos using it.
+To use the JSONSilo Manage API, you need an API key for authentication. Include your API key in the `X-MAN-API` or `x-man-api` HTTP header for all API requests:
 
 ```bash
-curl -X GET \
-    -H 'X-MAN-API: YOUR_API_KEY' \
-    -H 'Content-Type: application/json' \
-    https://api.jsonsilo.com/api/v1/manage/[FILE_UUID]
+X-MAN-API: MANAGE_API_KEY
 ```
 
+> - Replace `MANAGE_API_KEY` with your actual API key.
+> - To generate a new API key, follow the instructions [here](/keys/manage-keys).
+
+#### Example Request
+Here is an example of how to make a request using `curl`:
+
+```bash Terminal
+curl -X GET "https://api.jsonsilo.com/api/v1/manage/silos" \
+     -H "X-MAN-API: YOUR_MANAGE_API_KEY" \
+     -H "Content-Type: application/json"
+```

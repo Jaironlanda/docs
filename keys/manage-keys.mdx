@@ -1,0 +1,94 @@
+---
+title: Manage Keys
+---
+
+## What is Manage Keys?
+
+A Manage Key allows you to perform operations like creating, reading, updating, and deleting JSON files through API calls, without needing to sign in to the console.
+
+For more information on using Manage Keys with the JSONsilo API, refer to our [API Reference Documentation](/api-reference/introduction).
+
+
+## How to Create a Manage Key
+
+<Steps>
+  <Step title="Go to the Keys Page">
+    Click on the "Keys" menu in the sidebar and then click the `Manage` button. 
+    
+    <img 
+      src="/images/keys/manage-key/1a.png" 
+      alt="quick start manage key"
+      className="rounded-lg"
+    />
+  </Step>
+  <Step title="Generate a New Manage Key">
+    Click the `Create new Manage Key` button to generate a new Manage Key.
+
+    <img 
+      src="/images/keys/manage-key/1.png" 
+      alt="quick start manage key"
+      className="rounded-lg"
+    />
+  </Step>
+  <Step title="Set Key Details">
+    In the dialog, enter a name and select a duration for your Manage Key, then click the `Add key` button.
+    
+    <img 
+      src="/images/keys/manage-key/2.png" 
+      alt="quick start manage key"
+      className="rounded-lg"
+    />
+  </Step>
+  <Step title="Save the Manage Key">
+    Copy the Manage Key and store it securely.
+
+    <Warning>Copy the key now, as you won't be able to see it again!</Warning>
+
+    <img 
+      src="/images/keys/manage-key/3.png" 
+      alt="quick start manage key"
+      className="rounded-lg"
+    />
+  </Step>
+</Steps>
+
+## Revoking a Manage Key
+
+To revoke a Manage Key, follow these steps:
+
+<Steps>
+  <Step title="Go to the Keys Page">
+    Click on the "Keys" menu in the sidebar and then click the `Manage` button.
+
+    <img 
+      src="/images/keys/revoke-manage-key/1a.png" 
+      alt="quick start manage key"
+      className="rounded-lg"
+    />
+
+  </Step>
+  <Step title="Revoke the Manage Key">
+    Find the Manage Key you want to revoke in the list and click the `Revoke` button next to it.
+
+    <img 
+      src="/images/keys/revoke-manage-key/1.png"
+      alt="revoke manage key"
+      className="rounded-lg"
+    />
+  </Step>
+  <Step title="Confirm Revocation">
+    In the confirmation dialog, enter the key name and click the `Delete` button to revoke the Manage Key.
+    
+    <img 
+      src="/images/keys/revoke-manage-key/2.png"
+      alt="revoke manage key"
+      className="rounded-lg"
+    />
+  </Step>
+</Steps>
+
+## Best Practices for Managing Manage Keys
+
+- **Keep Your Manage Keys Secret**: Treat your Manage Keys like passwords. Do not share them publicly or expose them in client-side code.
+- **Rotate Your Manage Keys Regularly**: Periodically regenerate your Manage Keys to minimize the risk of unauthorized access.
+- **Use Environment Variables**: Store your Manage Keys in environment variables instead of hardcoding them in your application.

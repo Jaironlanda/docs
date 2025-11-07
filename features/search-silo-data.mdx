@@ -1,0 +1,176 @@
+---
+title: 'Search'
+description: 'Dynamically search silo data'
+---
+
+## Introduction
+
+JSONsilo now supports searching data within silos. This feature allows you to search and interact with silo data programmatically. By adding specific search query parameters to your silo URL, you can search for precise information within your JSON data without needing to download or manually parse the entire dataset.
+
+> **This feature is currently supported only for <u>Private Silos</u>.**
+
+## Limitations
+
+While the search feature is powerful, it currently has some limitations:
+
+- Only private silos are supported; public silos are not yet available.
+- `output` parameter is not supported in search functionality.
+
+Future updates will add support for more complex queries, additional operators, sorting, and pagination.
+
+# Usage
+
+To search data from your private silo, you need to add specific query parameters to your silo URL. These parameters allow you to retrieve data dynamically based on your requirements.
+
+> **Notes:** 
+> - Make sure the parameters are in the correct order when combining them in a request.
+> - All parameters are required for the search to work.
+> - Default operator is `eq` (equal to) if not specified.
+> - Default response format is Array of Objects.
+
+- `q`: The path in the silo data to search.
+- `value`: The value to search for at the specified path.
+- `op`: The search operator to use (see the list of supported operators below).
+
+### Supported Operators
+
+The following search operators are available:
+
+  | Operator | Description                        |
+  |----------|------------------------------------|
+  | `eq`     | Equal to                           |
+  | `gt`     | Greater than                       |
+  | `lt`     | Less than                          |
+  | `ne`     | Not equal to                       |
+  | `lk`     | Like (case-sensitive)              |
+  | `il`     | Insensitive like (case-insensitive)|
+
+
+## How It Works
+
+The search functionality works by evaluating each object in a JSON array against the specified query parameters. The `q` parameter defines the path to the field you want to search, the `value` parameter specifies the value to look for, and the `op` parameter indicates the comparison operator to use.
+
+
+### Example 1: Basic Search
+
+Suppose you have a private silo containing an array of objects like this:
+
+```json data.json
+[
+  { "id": 1, "name": "Alice", "age": 22 },
+  { "id": 2, "name": "Bob", "age": 28 },
+  { "id": 3, "name": "Charlie", "age": 31 }
+]
+```
+
+Find objects where `age` is <u>greater than</u> `25`
+
+- Use `?q=age` to specify the field to search.
+- Use `&value=25` to set the value to compare against.
+- Use `&op=gt` to set the operator to "greater than".
+
+```bash
+?q=age&value=25&op=gt
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=age&value=25&op=gt
+```
+
+Response:
+```json
+[
+  { "id": 2, "name": "Bob", "age": 28 },
+  { "id": 3, "name": "Charlie", "age": 31 }
+]
+```
+
+### Example 2: Nested Field
+
+Suppose your silo data looks like this:
+
+```json data.json
+[
+  { "id": 1, "profile": { "name": "Alice", "age": 22 } },
+  { "id": 2, "profile": { "name": "Bob", "age": 28 } },
+  { "id": 3, "profile": { "name": "Charlie", "age": 31 } }
+]
+```
+
+Find objects where `profile.age` is <u>less than</u> `30`.
+
+- Use `?q=profile.age` to specify the field to search.
+- Use `&value=30` to set the value to compare against.
+- Use `&op=lt` to set the operator to "less than".
+
+```bash
+?q=profile.age&value=30&op=lt
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=profile.age&value=30&op=lt
+```
+
+Response:
+```json
+[
+  { "id": 1, "profile": { "name": "Alice", "age": 22 } }
+]
+```
+
+### Example 3: Multiple Operators
+
+> 🚧 Coming soon
+
+## Combining parameter with `path`
+
+You can combine the search parameters with the `path` parameter to extract specific fields from the matched objects.
+
+### How It Works
+
+When combining the `path` parameter with search parameters, the search is performed first to filter the objects based on the criteria defined by `q`, `value`, and `op`. After filtering, the `path` parameter is applied to extract the specified field from each of the matched objects.
+
+Suppose your silo data looks like this:
+
+```json data.json
+[
+  { "id": 1, "profile": { "name": "Alice", "age": 22 } },
+  { "id": 2, "profile": { "name": "Bob", "age": 28 } },
+  { "id": 3, "profile": { "name": "Charlie", "age": 31 } }
+]
+```
+
+If you want to find the `name` of users whose `profile.age` is greater than `25`, you would construct your request as follows:
+
+- Use `?q=profile.age` to specify the field to search.
+- Use `&value=25` to set the value to compare against.
+- Use `&op=gt` to set the operator to "greater than".
+- Use `&path=profile.name` to extract the `name` field from the matched objects.
+
+```bash
+?q=profile.age&value=25&op=gt&path=profile.name
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=profile.age&value=25&op=gt&path=profile.name
+```
+
+Response:
+```json
+[
+  "Bob",
+  "Charlie"
+]
+```
+
+> **Notes:** 
+> - The order of parameters is important. The search parameters (`q`, `value`, `op`) should come before the `path` parameter in the URL.
+> - If no objects match the search criteria, the response will be an empty array.
+> - The `path` parameter can extract nested fields as well.
+> - When using the `path` parameter, ensure that the specified path exists in the matched objects to avoid `null` values in the response.

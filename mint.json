@@ -13,6 +13,14 @@
   },
   "topbarLinks": [
     {
+      "name": "Get Started",
+      "url": "/get-started"
+    },
+    {
+      "name": "API Reference",
+      "url": "/api-reference"
+    },
+    {
       "name": "Support",
       "url": "mailto:hello@jsonsilo.com"
     }
@@ -23,47 +31,95 @@
   },
   "anchors": [
     {
+      "name": "Get Started",
+      "icon": "rocket",
+      "url": "get-started"
+    },
+    {
+      "name": "How-To Guides",
+      "icon": "book",
+      "url": "how-to-guides"
+    },
+    {
       "name": "API Reference",
       "icon": "code",
       "url": "api-reference"
     },
     {
       "name": "Changelog",
-      "icon": "palette",
+      "icon": "history",
       "url": "changelog"
     }
   ],
   "topAnchor": {
-    "name": "Guides"
+    "name": "Get Started"
   },
   "navigation": [
     {
       "group": "Get Started",
+      "icon": "play",
       "pages": [
-        "introduction"
+        "introduction",
+        "quick-start",
+        "key-concepts",
+        "regions",
+        "pricing-plans"
       ]
     },
     {
-      "group": "How to...",
+      "group": "How-To Guides",
+      "icon": "lightbulb",
       "pages": [
         "how-to/create-silo",
-        "how-to/view-silo",
-        "how-to/update-silo",
-        "how-to/delete-silo",
-        {
-          "group": "Manage",
-          "pages": [
-            "how-to/manage/public-silo-access",
-            "how-to/manage/private-silo-access",
-            "how-to/manage/region"
-          ]
-        }
+        "how-to/manage-silo"
       ]
     },
     {
-      "group": "Resources",
+      "group": "Silo Types",
+      "icon": "database",
       "pages": [
-        "resources/examples"
+        "silo-types/private-silo",
+        "silo-types/public-silo",
+        "silo-types/demo"
+      ]
+    },
+    {
+      "group": "Features",
+      "icon": "star",
+      "pages": [
+        "features/query-silo-data",
+        "features/search-silo-data"
+      ]
+    },
+    {
+      "group": "Keys",
+      "icon": "key",
+      "pages": [
+        "keys/access-keys",
+        "keys/manage-keys"
+      ]
+    },
+    {
+      "group": "Editor",
+      "icon": "pencil-alt",
+      "pages": [
+        "editor/JSON-Editor"
+      ]
+    },
+     {
+      "group": "Billing",
+      "icon": "credit-card",
+      "pages": [
+        "billing/upgrade-plan",
+        "billing/cancel-subscription"
+      ]
+    },
+    {
+      "group": "FAQ",
+      "icon": "gear",
+      "pages": [
+        "faq/general",
+        "faq/billing"
       ]
     },
     {
@@ -77,7 +133,7 @@
       "pages": [
         "changelog/update"
       ]
-    },
+    },    
     {
       "group": "Endpoint Examples",
       "pages": [
@@ -94,10 +150,5 @@
     "x": "https://x.com/jaironlanda",
     "github": "https://github.com/jaironlanda",
     "linkedin": "https://linkedin.com/jaironlanda"
-  },
-  "analytics": {
-    "plausible": {
-        "domain": "docs.jsonsilo.com"
-    }
   }
 }

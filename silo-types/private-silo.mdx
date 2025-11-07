@@ -1,0 +1,44 @@
+---
+title: Private Silo
+description: 'Introduction to Private Silos in JSONsilo'
+---
+
+import ExamplePrivateSilo from '/snippets/example-private-silo.mdx';
+
+## What is a Private Silo?
+
+A Private Silo in JSONsilo is a secure storage solution for your JSON files that restricts access to authorized users only. Unlike public silos, which can be accessed by anyone with the link, private silos require an Access Key for access, ensuring that your data remains confidential and protected.
+
+## Key Features of Private Silos
+
+- **Access Control**: Only users with the correct Access Key can access the data stored in a private silo.
+- **Query and Search**: You can perform advanced queries and searches on the JSON data stored in your private silo.
+
+## Use Cases
+- **Confidential Data Storage**: Store sensitive JSON data that should not be publicly accessible.
+- **Internal Applications**: Use private silos to manage JSON data for internal applications that require restricted access.
+- **Development and Testing**: Create private silos for development and testing purposes, ensuring that test data remains secure.
+
+## How to Create a Private Silo
+
+To create a private silo, follow these steps:
+
+1. Navigate to the Silos dashboard in JSONsilo console.
+2. Click on the "Create new Silo" button.
+3. Select the "Private" option in the access field.
+4. Click "Next: Add JSON Data" button to proceed.
+5. Upload or create your JSON file using the JSON Editor.
+6. Save the silo to generate a unique URL.
+
+## Accessing a Private Silo
+
+<ExamplePrivateSilo />
+
+
+## Rate Limits
+
+Private silos have the same rate limits as public silos depending on your [subscription plan](/pricing-plans).
+
+Here are some links you might find helpful:
+- **Query Silo Data**: [Learn how to query private silos](/features/query-silo-data)
+- **Search Silo Data**: [Learn how to search private silos](/features/search-silo-data)

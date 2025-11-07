@@ -1,0 +1,42 @@
+To access a private silo, include your Access Key in the request headers. Use the `X-SILO-KEY` or `x-silo-key` header to provide your [Access Key](/keys/access-keys).
+
+<CodeGroup>
+
+```bash Terminal
+curl -X GET \
+  -H 'X-SILO-KEY: <YOUR_X_SILO_KEY_HERE>' \
+  -H 'Content-Type: application/json' \
+  https://[region-code].jsonsilo.com/[file-uuid]
+```
+
+```javascript main.js
+fetch('https://[region-code].jsonsilo.com/[file-uuid]', {
+  method: 'GET',
+  headers: {
+    'X-SILO-KEY': '<YOUR_X_SILO_KEY_HERE>',
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+```
+
+```python main.py
+import requests
+
+url = 'https://[region-code].jsonsilo.com/[file-uuid]'
+headers = {
+    'X-SILO-KEY': '<YOUR_X_SILO_KEY_HERE>',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(url, headers=headers)
+if response.status_code == 200:
+    print(response.json())
+else:
+    print('Error:', response.status_code)
+```
+
+</CodeGroup>
+

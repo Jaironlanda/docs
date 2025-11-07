@@ -1,45 +1,77 @@
 ---
 title: 'Create Silo'
-description: 'Guide on how to create a silo'
+description: 'Learn how to create a silo in JSONsilo to store and manage your JSON files effectively.'
 ---
 
 ## Introduction
 
-This page is a guide on how to create a silo through the user console.
+Creating a silo in JSONsilo allows you to securely store and manage your JSON files. This guide will walk you through the steps to create a new silo, and access it using the unique URL provided.
 
-Below is a video on how to create a silo from the dashboard page.
+### Step 1: Navigate to Silos dashboard
 
-<video
-  controls
-  className="w-full aspect-video"
-  src="https://pocketbase.jaironlanda.com/api/files/2ef0fadurph4e43/ud87ro0kg32yymu/create_silo_dashboard_fgS61xIhvF.mp4"
-></video>
+Click on the "Silos" in the main navigation menu to access the Silos dashboard.
 
-__Silo name__: 
-Choose a name for your silo that is easy to remember and understand. Rest assured, the silo name will not affect development or any sensitive aspects.
+You will see a list of existing silos if you have any. To create a new silo, click on the "Create" or "Create new Silo" button or "Getting Started" if you have no silos yet.
 
-__Region__:
-Choose a region close to you to minimize latency. By default, the Free plan is set to Germany (Dusseldorf).
+<img 
+  src="/images/create-silo/1.png" 
+  alt="create silo"
+  className="rounded-lg"
+/>
 
-__Access__:
-We offer you two types of access for your silo: Private and Public.
-- [**Private**](/how-to/manage/private-silo-access): You are required to have an access key to access or read the silo content.
-- [**Public**](/how-to/manage/public-silo-access): Allow everyone to access your silo.
 
-__Access Key__: This action is available when private access is selected. You can also generate the access key manually before or after creating a private silo.
+### Step 2: Click on "Create Silo"
 
-__JSON File__: You can choose whether to enter the JSON file manually or upload it.
+Click on the "Create Silo" button to start the silo creation process.
 
-- **Manual**: Enter the JSON file manually.
-- **Upload**: Drag and drop the file or select it by clicking the upload area. After uploading, you can review the JSON file before deploying your silo.
+<Tabs>
+  <Tab title="Private Silo" icon="lock">
 
-### Creating silo from onboarding page
+    If you want to create a private silo that requires an [Access Key](/keys/access-keys) for access, select the "Private" option in the access field.
 
-Below is a video on how to create a silo from the onboarding page. 
-You can also open the onboarding page from __Menu > Onboarding__.
+    <img 
+      src="/images/create-silo/2b-private.png" 
+      alt="create silo button"
+      className="rounded-lg"
+    />
+  </Tab>
+  <Tab title="Public Silo" icon="globe">
+    If you want to create a public silo that is accessible to anyone with the link, select the "Public" option in the access field.
 
-<video
-  controls
-  className="w-full aspect-video"
-  src="https://pocketbase.jaironlanda.com/api/files/2ef0fadurph4e43/a5p53daxuj1ur1s/create_silo_H33cOMFX6G.mp4"
-></video>
+    <img 
+      src="/images/create-silo/2a-public.png" 
+      alt="create silo button"
+      className="rounded-lg"
+    />
+  </Tab>
+</Tabs>
+
+### Step 3: Create/Upload your JSON file
+
+Once you click on the "Next: Add JSON Data" button, you will be directed to the [JSON Editor](/editor/json-editor) page. You can either create a new JSON file from scratch using the built-in editor or upload an existing JSON file from your computer.
+
+<img 
+  src="/images/create-silo/3.png" 
+  alt="create silo json editor"
+  className="rounded-lg"
+/>
+
+1. **Manual**: Use the JSON editor to create your JSON file by adding key-value pairs, arrays, and nested objects as needed.
+2. **Upload**: Click on the "Upload" tab button to upload a JSON file from your computer. Make sure the file is in valid JSON format.
+
+<img 
+  src="/images/create-silo/4.png" 
+  alt="create silo json editor"
+  className="rounded-lg"s
+/>
+
+3. **Editor**: You can use the editor to create JSON data manually. You can also edit any JSON data that you upload if needed.
+4. **Save**: After creating or uploading your JSON file, click the "Save" button to save and deploy your silo.
+5. **Save & Close**: After creating or uploading your JSON file, click the "Save & Close" button to save and close the editor and you will be redirected to the silo details page.
+
+That's it! You have successfully created a silo in JSONsilo. ✨
+
+## What's next?
+- Learn how to [view your silo details and access URL](how-to/view-silo).
+- Learn how to [update your silo data](how-to/update-silo).
+- Learn how to [delete your silo](how-to/delete-silo).

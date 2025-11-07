@@ -6,13 +6,13 @@
   },
   "servers": [
     {
-      "url": "https://api.jsonsilo.com"
+      "url": "https://api-test.jsonsilo.com"
     },
     {
-      "url": "https://sg-01-api.jsonsilo.com"
+      "url": "https://sg-01-api-test.jsonsilo.com"
     },
     {
-      "url": "https://usc-01-api.jsonsilo.com"
+      "url": "https://usc-01-api-test.jsonsilo.com"
     }
   ],
   "paths": {
@@ -75,8 +75,6 @@
                       "items": {
                         "type": "object",
                         "properties":{
-                          
-                          
                           "file_name": {
                             "type": "string",
                             "example": "new db",
@@ -143,8 +141,8 @@
     "/api/v1/manage/meta/{file_uuid}": {
       "get": {
         "tags": ["Manage"],
-        "summary": "Manage Get Meta Jsonfile",
-        "description": "API endpoint to get the metadata of a silo",
+        "summary": "Get Silo Metadata",
+        "description": "API endpoint to retrieve the metadata of a silo.",
         "operationId": "manage_get_meta_jsonfile_api_v1_manage_meta__file_uuid__get",
         "security": [
           {
@@ -235,8 +233,8 @@
     "/api/v1/manage/{file_uuid}": {
       "get": {
         "tags": ["Manage"],
-        "summary": "Manage Get Jsonfile",
-        "description": "API endpoint to get the `file_data` of a silo.",
+        "summary": "Get Silo",
+        "description": "API endpoint to retrieve silo data.",
         "operationId": "manage_get_jsonfile_api_v1_manage__file_uuid__get",
         "security": [
           {
@@ -271,8 +269,7 @@
                           {
                             "type": "object"
                           }
-                        ],
-                        "description": "The data you want to store in the silo. It can be a JSON object or an array of objects.",
+                        ],                        
                         "title": "File Data"
                       }
                     }
@@ -304,7 +301,7 @@
       },
       "patch": {
         "tags": ["Manage"],
-        "summary": "Manage Update Jsonfile Data",
+        "summary": "Update Silo",
         "description": "API endpoint to update silo.",
         "operationId": "manage_update_jsonfile_data_api_v1_manage__file_uuid__patch",
         "security": [
@@ -426,7 +423,7 @@
       },
       "delete": {
         "tags": ["Manage"],
-        "summary": "Manage Delete Jsonfile Data",
+        "summary": "Delete Silo",
         "description": "API endpoint to delete a silo",
         "operationId": "manage_delete_jsonfile_data_api_v1_manage__file_uuid__delete",
         "security": [
@@ -476,7 +473,7 @@
     "/api/v1/manage": {
       "post": {
         "tags": ["Manage"],
-        "summary": "Manage New Jsonfile",
+        "summary": "Create Silo",
         "description": "API endpoint to create a new silo",
         "operationId": "manage_new_jsonfile_api_v1_manage_post",
         "requestBody": {
@@ -602,7 +599,7 @@
                 "type": "object"
               }
             ],
-            "description": "The data you want to store in the silo. It can be a JSON object or an array of objects.",
+            "description": "The data you want to store in the silo. It can be a JSON `object` or an `array of objects`.",
             "title": "File Data"
           },
           "region_name": {

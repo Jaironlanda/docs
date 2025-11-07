@@ -1,0 +1,33 @@
+---
+title: Key concepts
+---
+
+### What is a Silo?
+
+A silo is a storage container for a JSON file. When you upload a JSON file to JSONsilo, it becomes a silo. Each silo has a unique file UUID that you can use to access the JSON file through our API.
+
+### Public vs Private Silo
+
+- **Public Silo**: These silos can be accessed by anyone with the URL. No authentication is required to read the JSON data stored in a public silo.
+- **Private Silo**: These silos are restricted and require an **Access Key** for any operations. Only users with the correct Access Key can read the JSON data in a private silo.
+
+
+### Access Keys vs Manage Keys
+
+- **Access Keys**: These keys are used to authenticate API requests for private silos. They allow you to read the JSON data stored in the silo.
+- **Manage Keys**: These keys provide higher-level access, allowing you to perform management operations such as creating, updating, or deleting silos.
+
+### Region Codes
+
+JSONsilo is hosted in multiple regions around the world. Each region has a unique code that is used in the API endpoints to specify where your silo is located.
+
+
+| Region Code   | Description            |
+|---------------|------------------------|
+| `api`         | General API region     |
+| `sg-01-api`   | Singapore region       |
+| `usc-01-api`  | US Central region      |
+
+### File UUID
+
+Each silo is assigned a unique identifier (UUID) that is used to access it via the API. The UUID is **unchangeable** and consists of 32 hexadecimal characters separated by 4 hyphens, making it 36 characters long.

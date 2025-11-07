@@ -1,0 +1,43 @@
+---
+title: 'Access vs Manage Key'
+description: 'Understanding the differences and use cases for Access Key and Manage Key'
+icon: key
+---
+
+# Introduction
+To avoid confusion between the Access Key and the Manage Key, this guide provides a detailed explanation of their differences, purposes, and use cases.
+
+## Access Key
+An Access Key is used to gain entry to a private silo. It is primarily designed for read-only access, ensuring that users can retrieve data securely without the ability to modify or manage the silo.
+
+### Key Features
+- Provides secure access to private silos.
+- Ensures data integrity by restricting write or management operations.
+- Ideal for scenarios where data retrieval is the primary requirement.
+
+### Example Use Case
+Imagine you have a private silo containing sensitive data. You can share the Access Key with a trusted user to allow them to view the data without granting them permissions to alter or manage the silo.
+
+## Manage Key
+A Manage Key is required when you need to programmatically manage a silo. It provides full control over the silo, enabling you to perform administrative tasks.
+
+### Key Features
+- Grants full access to create, update, and delete silos.
+- Enables programmatic management of silos through APIs or automation scripts.
+- Suitable for developers or administrators managing multiple silos.
+
+### Use Cases
+- **List all created silos**: Retrieve a list of all silos under your account.
+- **Create a silo**: Programmatically create a new silo for storing data.
+- **Update a silo**: Modify the configuration or metadata of an existing silo.
+- **Delete a silo**: Remove a silo that is no longer needed.
+
+### Example Use Case
+If you are building an application that interacts with multiple silos, you can use the Manage Key to automate the creation, updating, and deletion of silos as part of your workflow.
+
+## Summary
+The Access Key and Manage Key serve distinct purposes:
+- Use an **Access Key** for secure, read-only access to private silos.
+- Use a **Manage Key** for full control and programmatic management of silos.
+
+Understanding these differences ensures that you use the appropriate key for your specific needs, enhancing both security and functionality.

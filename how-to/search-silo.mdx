@@ -1,0 +1,103 @@
+---
+title: 'Search Silo'
+description: 'Dynamically search silo data'
+---
+
+# Introduction
+
+JSONsilo now supports searching data within silos. This feature enables users to dynamically search and interact with silo data programmatically. Currently, only private silos are supported, but management functionality will be added to the API in the near future. This enhancement provides greater flexibility and control over your data.
+
+# Limitations
+
+While the search functionality is a powerful addition, it is still in its early stages and has some limitations that will be addressed in future updates:
+
+- Multiple conditions, nested queries, sorting, and pagination are not supported.
+- Only private silos are supported at this time; public silos are not yet supported.
+
+Future updates will expand these capabilities to support more complex queries, additional operators, and features such as sorting and pagination.
+
+# Operators
+The following search operators are available:
+
+  | Operator | Description                        |
+  |----------|------------------------------------|
+  | `eq`     | Equal to                           |
+  | `gt`     | Greater than                       |
+  | `lt`     | Less than                          |
+  | `ne`     | Not equal to                       |
+  | `lk`     | Like (case-sensitive)              |
+  | `il`     | Insensitive like (case-insensitive)|
+
+
+# Usage
+
+To search data from your private silo, you need to add specific query parameters to your silo URL. These parameters allow you to retrieve data dynamically based on your requirements.
+
+## Parameters
+
+- `q` (required): Specifies the path within the silo data to search.
+- `value` (required): The value to search for at the specified path.
+- `op` (required): The search operator to use. See the list of supported operators above.
+> **Note**: This functionality only works with JSON arrays. If the data is not a JSON array, the search will return `null`.
+
+### Basic Example
+
+Suppose you have a private silo containing an array of user objects like this:
+
+```json
+[
+  { "id": 1, "name": "Alice", "age": 22 },
+  { "id": 2, "name": "Bob", "age": 28 },
+  { "id": 3, "name": "Charlie", "age": 31 }
+]
+```
+
+If you want to find users whose `age` is greater than 25, you would construct your request as follows:
+- `?q=age`
+- `&value=25`
+- `&op=gt` (Greater than )
+
+```
+GET https://api.jsonsilo.com/your-silo-uuid?q=age&value=25&op=gt
+```
+
+This request will return all objects in the array where the `age` property is greater than 25:
+
+```json
+[
+  { "id": 2, "name": "Bob", "age": 28 },
+  { "id": 3, "name": "Charlie", "age": 31 }
+]
+```
+
+### Advanced Example: Nested Field
+
+You can also access nested fields in the `q` parameter.
+
+Example data:
+
+```json
+[
+  { "id": 1, "profile": { "name": "Alice", "age": 22 } },
+  { "id": 2, "profile": { "name": "Bob", "age": 28 } },
+  { "id": 3, "profile": { "name": "Charlie", "age": 31 } }
+]
+```
+
+To find users whose `profile.age` is greater than 25, use:
+
+```
+GET https://api.jsonsilo.com/your-silo-uuid?q=profile.age&value=25&op=gt
+```
+
+
+### Path parameter `path`
+In search silo, is supported
+
+## Best Practices
+
+- Ensure your silo data is structured as a JSON array for the search functionality to work.
+- Use the appropriate operator for your search to get accurate results.
+- As the feature evolves, keep an eye on updates for support of more advanced query capabilities.
+
+If you encounter any issues or have suggestions for improvements, please reach out to the JSONsilo support team or check the documentation for the latest updates.
