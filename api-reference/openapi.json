@@ -6,13 +6,13 @@
   },
   "servers": [
     {
-      "url": "https://api-test.jsonsilo.com"
+      "url": "https://api.jsonsilo.com"
     },
     {
-      "url": "https://sg-01-api-test.jsonsilo.com"
+      "url": "https://sg-01-api.jsonsilo.com"
     },
     {
-      "url": "https://usc-01-api-test.jsonsilo.com"
+      "url": "https://usc-01-api.jsonsilo.com"
     }
   ],
   "paths": {
