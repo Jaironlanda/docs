@@ -470,7 +470,7 @@
         }
       }
     },
-    "/api/v1/manage": {
+    "/api/v1/manage/": {
       "post": {
         "tags": ["Manage"],
         "summary": "Create Silo",
