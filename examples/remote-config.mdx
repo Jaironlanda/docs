@@ -1,0 +1,197 @@
+---
+title: 'Remote config and feature flags'
+sidebarTitle: 'Remote config'
+description: 'Turn features on and off without a deploy by reading flags from a public silo.'
+icon: toggle-on
+---
+
+Store your app's flags in a public silo and read them when the app starts. To flip a flag, edit the silo. Every app that reads it picks up the change on its next fetch, with no deploy.
+
+**You will use:** a [public silo](/silo-types/public-silo), and optionally [Schema Lock](/features/schema-lock).
+
+<Warning>Anyone with the URL can read a public silo. Put only values that are safe to show in a browser in it, never API keys or secrets.</Warning>
+
+## 1. Create the silo
+
+Create a **Public** silo named `app-config` with this JSON:
+
+```json app-config.json
+{
+  "maintenance": false,
+  "banner": {
+    "enabled": true,
+    "text": "Free shipping this weekend",
+    "link": "/sale"
+  },
+  "features": {
+    "newCheckout": true,
+    "darkMode": false
+  },
+  "minAppVersion": "2.4.0"
+}
+```
+
+Copy the URL from the **Public URL** card on the silo's **Overview** tab. It looks like this:
+
+```bash
+https://[region-code].jsonsilo.com/public/[file-uuid]
+```
+
+## 2. Read the flags
+
+Always keep a set of defaults in your code. If the request fails or is slow, the app still starts with known values.
+
+<Tabs>
+  <Tab title="JavaScript" icon="js">
+    ```javascript config.js
+    const CONFIG_URL = 'https://[region-code].jsonsilo.com/public/[file-uuid]';
+
+    const DEFAULTS = {
+      maintenance: false,
+      banner: { enabled: false },
+      features: { newCheckout: false, darkMode: false },
+    };
+
+    export async function loadConfig() {
+      try {
+        const res = await fetch(CONFIG_URL, { signal: AbortSignal.timeout(3000) });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const remote = await res.json();
+        return {
+          ...DEFAULTS,
+          ...remote,
+          features: { ...DEFAULTS.features, ...remote.features },
+        };
+      } catch (err) {
+        console.warn('Using default config:', err.message);
+        return DEFAULTS;
+      }
+    }
+    ```
+
+    ```javascript main.js
+    import { loadConfig } from './config.js';
+
+    const config = await loadConfig();
+
+    if (config.maintenance) {
+      document.body.innerHTML = '<h1>We will be back soon.</h1>';
+    } else if (config.banner.enabled) {
+      const banner = document.querySelector('#banner');
+      banner.textContent = config.banner.text;
+      banner.href = config.banner.link;
+      banner.hidden = false;
+    }
+    ```
+  </Tab>
+  <Tab title="React" icon="react">
+    ```jsx useRemoteConfig.js
+    import { useEffect, useState } from 'react';
+
+    const CONFIG_URL = 'https://[region-code].jsonsilo.com/public/[file-uuid]';
+
+    const DEFAULTS = {
+      maintenance: false,
+      banner: { enabled: false },
+      features: { newCheckout: false, darkMode: false },
+    };
+
+    export function useRemoteConfig() {
+      const [config, setConfig] = useState(DEFAULTS);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const controller = new AbortController();
+
+        fetch(CONFIG_URL, { signal: controller.signal })
+          .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+          .then((remote) =>
+            setConfig({
+              ...DEFAULTS,
+              ...remote,
+              features: { ...DEFAULTS.features, ...remote.features },
+            })
+          )
+          .catch(() => {}) // keep DEFAULTS
+          .finally(() => setLoading(false));
+
+        return () => controller.abort();
+      }, []);
+
+      return { config, loading };
+    }
+    ```
+
+    ```jsx Checkout.jsx
+    import { useRemoteConfig } from './useRemoteConfig';
+
+    export function Checkout() {
+      const { config, loading } = useRemoteConfig();
+
+      if (loading) return <Spinner />;
+      return config.features.newCheckout ? <NewCheckout /> : <LegacyCheckout />;
+    }
+    ```
+  </Tab>
+  <Tab title="Python" icon="python">
+    ```python config.py
+    import requests
+
+    CONFIG_URL = "https://[region-code].jsonsilo.com/public/[file-uuid]"
+
+    DEFAULTS = {
+        "maintenance": False,
+        "features": {"newCheckout": False, "darkMode": False},
+    }
+
+
+    def load_config() -> dict:
+        try:
+            res = requests.get(CONFIG_URL, timeout=3)
+            res.raise_for_status()
+            remote = res.json()
+        except requests.RequestException as err:
+            print(f"Using default config: {err}")
+            return DEFAULTS
+        return {
+            **DEFAULTS,
+            **remote,
+            "features": {**DEFAULTS["features"], **remote.get("features", {})},
+        }
+
+
+    if __name__ == "__main__":
+        config = load_config()
+        if config["features"]["newCheckout"]:
+            print("New checkout is on")
+    ```
+  </Tab>
+</Tabs>
+
+## 3. Flip a flag
+
+Pick whichever fits your workflow:
+
+- **Console:** Open the silo, go to the **Data & schema** tab, change the value, and save. See [Update Silo](/how-to/update-silo).
+- **Code or CI:** Send the new JSON with the Manage API. See [Update a silo from code and CI](/examples/sync-from-code).
+- **AI assistant:** Ask "Turn on `darkMode` in my `app-config` silo." See [Edit silos with an AI assistant](/examples/mcp-workflows).
+
+## 4. Protect the shape with Schema Lock
+
+Every app reading this silo expects `maintenance` to be a boolean. A typo such as `"maintenance": "no"` would turn on maintenance mode, because a non-empty string is truthy in JavaScript.
+
+[Lock a schema](/features/schema-lock) on the silo to stop that. With the generated **strict** schema locked:
+
+| Write | Result |
+|---|---|
+| `"darkMode": true` | Saved |
+| `"maintenance": "no"` | Rejected: `maintenance` must be a boolean |
+| A misspelled key, such as `"maintainance": true` | Rejected: unknown fields aren't allowed in strict mode |
+
+<Tip>If you plan to add new flags often, use **Loose** mode. Existing flags must keep their types, but new keys are accepted.</Tip>
+
+## Good to know
+
+- **Each fetch is a request.** Public silo reads count towards the silo owner's daily limit. For busy sites, fetch once per session and keep the result in memory or `sessionStorage`. See [Rate Limits](/rate-limits).
+- **The whole document is returned.** Public silos don't support [Query](/features/query-silo-data) or [Search](/features/search-silo-data), so keep config silos small.
+- **The URL can change.** Switching the silo to private or moving it to another region gives it a new URL. Update your apps if you do.

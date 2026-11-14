@@ -60,8 +60,7 @@
             "icon": "database",
             "pages": [
               "silo-types/private-silo",
-              "silo-types/public-silo",
-              "silo-types/demo"
+              "silo-types/public-silo"
             ]
           },
           {
@@ -114,6 +113,41 @@
             "pages": [
               "faq/general",
               "faq/billing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "icon": "flask",
+        "groups": [
+          {
+            "group": "Examples",
+            "pages": [
+              "examples/overview"
+            ]
+          },
+          {
+            "group": "Reading Data",
+            "icon": "book-open-reader",
+            "pages": [
+              "examples/remote-config",
+              "examples/private-backend",
+              "examples/product-catalog"
+            ]
+          },
+          {
+            "group": "Writing Data",
+            "icon": "pen-to-square",
+            "pages": [
+              "examples/sync-from-code"
+            ]
+          },
+          {
+            "group": "AI Tools",
+            "icon": "robot",
+            "pages": [
+              "examples/mcp-workflows"
             ]
           }
         ]
@@ -194,6 +228,10 @@
     {
       "source": "/access-key-vs-manage-key",
       "destination": "/key-concepts"
+    },
+    {
+      "source": "/silo-types/demo",
+      "destination": "/examples/overview"
     }
   ]
 }

@@ -1,0 +1,255 @@
+---
+title: 'Product catalog with Query and Search'
+sidebarTitle: 'Query & Search recipes'
+description: 'Read only the products you need from a private silo, using URL parameters.'
+icon: magnifying-glass
+---
+
+This example stores a small product catalog in a private silo and shows how to read parts of it without downloading the whole thing.
+
+**You will use:** a [private silo](/silo-types/private-silo), an [Access Key](/keys/access-keys), [Query](/features/query-silo-data), and [Search](/features/search-silo-data).
+
+## The data
+
+Create a **Private** silo named `catalog` with this JSON. Search works on a top-level array, so the products are the root of the document.
+
+```json catalog.json
+[
+  {
+    "id": 1,
+    "name": "Classic Mug",
+    "category": "kitchen",
+    "price": 12.5,
+    "tags": [{ "label": "ceramic" }, { "label": "gift" }]
+  },
+  {
+    "id": 2,
+    "name": "Canvas Tote",
+    "category": "bags",
+    "price": 18,
+    "tags": [{ "label": "cotton" }]
+  },
+  {
+    "id": 3,
+    "name": "Travel Mug",
+    "category": "kitchen",
+    "price": 24,
+    "tags": [{ "label": "steel" }, { "label": "gift" }]
+  },
+  {
+    "id": 4,
+    "name": "Leather Backpack",
+    "category": "bags",
+    "price": 89,
+    "tags": [{ "label": "leather" }]
+  }
+]
+```
+
+Every request below goes to your silo URL with your Access Key:
+
+```bash Terminal
+curl -H 'X-SILO-KEY: <YOUR_X_SILO_KEY_HERE>' \
+  'https://[region-code].jsonsilo.com/[file-uuid]?<PARAMETERS>'
+```
+
+## Recipes
+
+<AccordionGroup>
+  <Accordion title="Get one product by position" icon="hashtag" defaultOpen>
+    `idx` picks one item from the array, counting from `0`.
+
+    ```bash
+    ?idx=2
+    ```
+
+    ```json Response
+    {
+      "id": 3,
+      "name": "Travel Mug",
+      "category": "kitchen",
+      "price": 24,
+      "tags": [{ "label": "steel" }, { "label": "gift" }]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Get one field of one product" icon="crosshairs">
+    Add `path` to `idx` to read a single field.
+
+    ```bash
+    ?idx=0&path=name
+    ```
+
+    ```json Response
+    "Classic Mug"
+    ```
+  </Accordion>
+
+  <Accordion title="Convert a field's type" icon="arrow-right-arrow-left">
+    `output` converts the value picked by `path`. Here the price comes back as text.
+
+    ```bash
+    ?idx=0&path=price&output=text
+    ```
+
+    ```json Response
+    "12.5"
+    ```
+  </Accordion>
+
+  <Accordion title="Products under a price" icon="tag">
+    Search with `op=lt` (less than). `gt` and `lt` compare as numbers.
+
+    ```bash
+    ?q=price&value=20&op=lt
+    ```
+
+    ```json Response
+    [
+      { "id": 1, "name": "Classic Mug", "category": "kitchen", "price": 12.5, "tags": [{ "label": "ceramic" }, { "label": "gift" }] },
+      { "id": 2, "name": "Canvas Tote", "category": "bags", "price": 18, "tags": [{ "label": "cotton" }] }
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Name contains a word" icon="font">
+    `il` matches a pattern, ignoring case. `%` is the wildcard and must be sent as `%25` in a URL.
+
+    ```bash
+    ?q=name&value=%25mug%25&op=il
+    ```
+
+    ```json Response
+    [
+      { "id": 1, "name": "Classic Mug", "category": "kitchen", "price": 12.5, "tags": [{ "label": "ceramic" }, { "label": "gift" }] },
+      { "id": 3, "name": "Travel Mug", "category": "kitchen", "price": 24, "tags": [{ "label": "steel" }, { "label": "gift" }] }
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Products with a tag" icon="tags">
+    A double dot (`..`) looks inside an array on each product. A product matches when any of its tags matches.
+
+    ```bash
+    ?q=tags..label&value=gift&op=eq
+    ```
+
+    ```json Response
+    [
+      { "id": 1, "name": "Classic Mug", "category": "kitchen", "price": 12.5, "tags": [{ "label": "ceramic" }, { "label": "gift" }] },
+      { "id": 3, "name": "Travel Mug", "category": "kitchen", "price": 24, "tags": [{ "label": "steel" }, { "label": "gift" }] }
+    ]
+    ```
+  </Accordion>
+
+  <Accordion title="Combine two conditions" icon="filter">
+    Repeat `q`, `value`, and `op` for each condition. All of them must match.
+
+    ```bash
+    ?q=category&value=kitchen&op=eq&q=price&value=20&op=gt
+    ```
+
+    Only one product matches, so it comes back on its own, not in an array:
+
+    ```json Response
+    { "id": 3, "name": "Travel Mug", "category": "kitchen", "price": 24, "tags": [{ "label": "steel" }, { "label": "gift" }] }
+    ```
+  </Accordion>
+
+  <Accordion title="Just the names of matching products" icon="list">
+    Add `path` to a search to pick one field from each match.
+
+    ```bash
+    ?q=price&value=20&op=gt&path=name
+    ```
+
+    ```json Response
+    ["Travel Mug", "Leather Backpack"]
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## A small client
+
+Search returns an array for two or more matches, a single object for one match, and `404` for none. This helper smooths that out, so your code always gets an array.
+
+<CodeGroup>
+
+```javascript catalog.js
+const SILO_URL = process.env.JSONSILO_URL; // https://[region-code].jsonsilo.com/[file-uuid]
+const ACCESS_KEY = process.env.JSONSILO_ACCESS_KEY;
+
+/**
+ * conditions: [{ field: 'price', op: 'lt', value: 20 }, ...]
+ */
+export async function searchProducts(conditions, { path } = {}) {
+  const url = new URL(SILO_URL);
+  for (const { field, op = 'eq', value } of conditions) {
+    url.searchParams.append('q', field);
+    url.searchParams.append('value', String(value)); // % is encoded as %25 for you
+    url.searchParams.append('op', op);
+  }
+  if (path) url.searchParams.set('path', path);
+
+  const res = await fetch(url, { headers: { 'X-SILO-KEY': ACCESS_KEY } });
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error(`JSONsilo returned ${res.status}`);
+
+  const data = await res.json();
+  return Array.isArray(data) ? data : [data];
+}
+
+// Usage
+const cheap = await searchProducts([{ field: 'price', op: 'lt', value: 20 }]);
+const mugs = await searchProducts([{ field: 'name', op: 'il', value: '%mug%' }]);
+const giftNames = await searchProducts(
+  [{ field: 'tags..label', value: 'gift' }],
+  { path: 'name' }
+);
+```
+
+```python catalog.py
+import os
+
+import requests
+
+SILO_URL = os.environ["JSONSILO_URL"]  # https://[region-code].jsonsilo.com/[file-uuid]
+ACCESS_KEY = os.environ["JSONSILO_ACCESS_KEY"]
+
+
+def search_products(conditions, path=None):
+    """conditions: [("price", "lt", 20), ...]"""
+    params = []
+    for field, op, value in conditions:
+        params += [("q", field), ("value", str(value)), ("op", op)]
+    if path:
+        params.append(("path", path))
+
+    res = requests.get(
+        SILO_URL, params=params, headers={"X-SILO-KEY": ACCESS_KEY}, timeout=5
+    )
+    if res.status_code == 404:
+        return []
+    res.raise_for_status()
+
+    data = res.json()
+    return data if isinstance(data, list) else [data]
+
+
+# Usage
+cheap = search_products([("price", "lt", 20)])
+mugs = search_products([("name", "il", "%mug%")])
+gift_names = search_products([("tags..label", "eq", "gift")], path="name")
+```
+
+</CodeGroup>
+
+<Note>A `404` can also mean a wrong UUID or region. If every search returns nothing, read the silo without parameters first to check the URL.</Note>
+
+## Good to know
+
+- **Results are cached for up to 5 minutes.** A search right after you update the catalog may return the previous data.
+- **Every query is a read.** Queries and searches count towards the silo's [rate limit](/rate-limits) like any other private silo read.
+- **No sorting or paging.** Sort and slice the results in your own code.
+- **Private silos only.** A public silo always returns the whole document.
