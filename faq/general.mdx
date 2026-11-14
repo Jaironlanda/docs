@@ -8,10 +8,19 @@ description: Frequently Asked Questions about JSONsilo
     JSONsilo is a fast and simple cloud-based storage solution that instantly turns your JSON data into a secure, shareable API. Whether you're prototyping, testing, or building a production-ready app, JSONsilo lets you store and retrieve structured data effortlessly.
   </Accordion>
   <Accordion title="How do I create an account?">
-    To create an account, visit our [Sign Up Page](https://jsonsilo.com/signup) and fill out the registration form with your details. Once submitted, you'll receive a confirmation email to verify your account.
+    To create an account, visit our [Sign Up Page](https://console.jsonsilo.com/signup) and fill out the registration form with your details. Once submitted, you'll receive a confirmation email to verify your account.
   </Accordion>
   <Accordion title="What are the main features of JSONsilo?">
-    JSONsilo offers features such as public and private JSON data, powerful search and query data in JSON.
+    JSONsilo offers public and private JSON data, three hosting regions, powerful [query](/features/query-silo-data) and [search](/features/search-silo-data) for data in JSON, [schema lock](/features/schema-lock) to reject writes that don't match a JSON Schema, an [MCP server](/mcp/overview) to connect AI tools, and a [Manage API](/api-reference/introduction) to manage silos from your own code.
+  </Accordion>
+  <Accordion title="Is there a free trial?">
+    Yes. Every new account starts on a free trial with full access. It ends after 2 days or 1,000 requests, whichever comes first. See [Pricing Plans](/pricing-plans#free-trial).
+  </Accordion>
+  <Accordion title="Can AI tools like Claude Code or Cursor work with my silos?">
+    Yes. Create an [MCP Key](/keys/mcp-keys) in the console and add the JSONsilo MCP server to your tool. The assistant can then list, read, query, and edit your silos. See [MCP Server](/mcp/overview).
+  </Accordion>
+  <Accordion title="How do I stop a bad update from breaking my app?">
+    Attach a JSON Schema to your silo and lock it. Any write that doesn't match the schema is rejected, and your stored data stays as it was. See [Schema Lock](/features/schema-lock).
   </Accordion>
   <Accordion title="How can I get support?">
     If you need assistance, you can reach out to our support team via the email hello@jsonsilo.com or chat with us directly through the support widget on our website.

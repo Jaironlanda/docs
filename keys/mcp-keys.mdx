@@ -1,0 +1,101 @@
+---
+title: MCP Keys
+description: 'Create and delete the keys that connect AI tools to your silos'
+---
+
+## What is an MCP Key?
+
+An MCP Key connects an AI tool, such as Claude Code, Cursor, or VS Code, to your silos through the [MCP server](/mcp/overview). The tool sends the key with every request, and the server uses it to find your account and decide what the assistant is allowed to do.
+
+An MCP Key starts with `jsmcp_`. It only works with the MCP server. It can't read a silo URL or call the Manage API, and an Access Key or Manage Key can't be used in its place.
+
+> **MCP Keys are available in the free trial and on the Basic and Pro plans.** See [Pricing Plans](/pricing-plans).
+
+## How to Create an MCP Key
+
+<Steps>
+  <Step title="Go to the Keys Page">
+    Click **Keys** in the sidebar and select the **MCP keys** card.
+
+    {/* TODO: screenshot of the Keys screen with the MCP keys card selected. Suggested path: /images/keys/mcp-key/keys-screen.png */}
+  </Step>
+  <Step title="Start a New Key">
+    Click the `New key` button.
+  </Step>
+  <Step title="Set Key Details">
+    In the **New MCP key** dialog, fill in three fields, then click `Create key`.
+
+    - **Key name**: A name that tells you where the key is used, for example `Claude Code on my laptop`.
+    - **Access**: What the assistant may do. See [Access levels](#access-levels).
+    - **Duration**: How long the key stays valid: **1 month**, **3 months**, **6 months**, or **12 months**.
+
+    <Note>On the free trial, MCP Keys last 1 month. Longer durations are available on the Basic and Pro plans.</Note>
+  </Step>
+  <Step title="Save the Key and Connect">
+    The **MCP key created** dialog shows your key, along with setup snippets for Claude Code, Cursor, VS Code, and other clients that already contain the key.
+
+    Copy the key or one of the snippets, then click `Done`.
+
+    <Warning>This is the only time you'll see this key. We only store a fingerprint of it, so it can't be shown again. If you lose it, delete it and create a new one.</Warning>
+
+    {/* TODO: screenshot of the MCP key created dialog. Suggested path: /images/keys/mcp-key/created.png */}
+  </Step>
+</Steps>
+
+To finish setting up your AI tool, see [Connect a Client](/mcp/connect-clients).
+
+## Access Levels
+
+| Access | What the assistant can do |
+|---|---|
+| **Read & write** | Create, update, patch, and delete silos as well as read them. |
+| **Read only** | List, read, and query silos. Write tools are hidden from it. |
+
+Choose **Read only** unless the assistant needs to change your data. A key's access can't be changed later. To switch, create a new key and delete the old one.
+
+## Your MCP Keys
+
+The **MCP keys** tab lists every key with these columns:
+
+| Column | Description |
+|---|---|
+| **Name** | The name you gave the key. |
+| **Key** | A hint of the key, such as `jsmcp_abcd...wxyz`, so you can tell keys apart. |
+| **Access** | **Read & write** or **Read only**. |
+| **Expires** | When the key stops working. An expired key is marked **Expired**. |
+| **Created** | When you created the key. |
+
+Click `Connect a client` to see the setup snippets again. They use a placeholder, `jsmcp_YOUR_KEY`, in place of your key.
+
+## When an MCP Key Expires
+
+An MCP Key stops working on its expiry date. The AI tool using it loses access, and requests return `401`.
+
+A key can't be extended. Create a new one, update your AI tool with it, and then delete the old key.
+
+## Deleting an MCP Key
+
+<Steps>
+  <Step title="Go to the Keys Page">
+    Click **Keys** in the sidebar and select the **MCP keys** card.
+  </Step>
+  <Step title="Delete the Key">
+    Find the key you want to delete and click the trash icon at the end of its row.
+  </Step>
+  <Step title="Confirm">
+    In the **Delete this key?** dialog, click the `Delete` button.
+  </Step>
+</Steps>
+
+The key stops working immediately, and any AI tool using it loses access. This action can't be undone.
+
+## If Your Plan Changes
+
+If your plan no longer includes MCP, your keys are kept but stop working, and the console shows a notice above the list. They work again as soon as you upgrade.
+
+## Best Practices for Managing MCP Keys
+
+- **Keep Your MCP Keys Secret**: Treat them like passwords. A setup snippet contains your key, so keep it out of files you commit.
+- **Use One Key per Tool**: Give each AI tool and each computer its own key, so you can delete one without disconnecting the others.
+- **Prefer Read Only**: Give **Read & write** access only to tools that need to change your data.
+- **Delete Keys You No Longer Use**: A key you have forgotten about is a key someone else could use.

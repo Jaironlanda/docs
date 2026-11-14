@@ -8,21 +8,35 @@ description: 'Guide on how to update a silo'
 
 This page provides a comprehensive guide on how to update silo data through the user console.
 
-## JSONsilo Editor
+## Update the data
 
-The JSONsilo editor is a crucial tool that allows you to manage JSON content more easily. It provides an intuitive interface for editing and updating your silo data.
+<Steps>
+  <Step title="Open the editor">
+    Click **Silos** in the sidebar, open the silo you want to update, and click the **Data & schema** tab. You can also click `Edit content` in the silo's header.
+  </Step>
+  <Step title="Change the JSON">
+    Edit the JSON in the **Data** pane on the left. You have two ways to do it:
 
-<img className="rounded" height="200" src="/images/update-silo/base-editor-5.png" />
+    - **Edit**: Type directly in the editor. The footer shows **Valid JSON** when the document parses, or the number of syntax errors when it doesn't.
+    - **Upload**: Switch to the upload mode and drop a `.json` file, or click `Browse files`. The file replaces the editor's content. Nothing is saved until you click `Save data`.
+  </Step>
+  <Step title="Review your changes">
+    Switch to the **Changes** mode to see a diff of what you changed against the saved version. Click `Discard` to throw the changes away.
+  </Step>
+  <Step title="Save">
+    Click `Save data`, or press `⌘S` on macOS or `Ctrl S` on Windows and Linux. The new data is served from your silo's URL.
+  </Step>
+</Steps>
 
-<img className="rounded" height="200" src="/images/update-silo/base-editor-4.png" />
+<Note>If the silo has a locked schema and your data doesn't match it, the console won't save. It tells you which value is invalid so you can fix it. See [Schema Lock](/features/schema-lock).</Note>
 
-1. Basic information about the silo: Name, UUID, and region.
-2. Available features in the editor:
-    - **Manual**: Manual input
-    - **Upload**: Upload `.json`
-    - **Download**: Download silo to `.json`
-    - **Save**: Save JSON file to the server and redeploy the silo
-    - **Save & Close editor**: Save JSON file and close the editor
-3. Editor, where you can edit and update JSON content
-4. Exit button, which will redirect you to the view silo page
-5. Toggle button to change the editor color: Light mode and Dark mode
+For everything the editor can do, see the [Data & Schema Editor](/editor/json-editor).
+
+## Update the name, access, or region
+
+Open the silo's **Settings** tab. See [Manage Silo](/how-to/manage-silo#3-settings).
+
+## Other ways to update a silo
+
+- **Manage API**: Send an [Update Silo](/api-reference/endpoint/patch-silo) request with a Manage Key.
+- **MCP**: Ask a connected AI tool to update or patch the silo. See [MCP Tools](/mcp/tools).

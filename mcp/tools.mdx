@@ -1,0 +1,203 @@
+---
+title: 'MCP Tools'
+sidebarTitle: 'Tools'
+description: 'The tools and resources the JSONsilo MCP server gives an assistant'
+---
+
+## Introduction
+
+The MCP server gives a connected assistant a set of **tools**. You don't call them yourself. You ask the assistant in plain language and it picks the right tool. This page lists what each tool does, so you know what an assistant can and can't do with your silos.
+
+Every tool is limited to the silos owned by the account that created the [MCP Key](/keys/mcp-keys).
+
+## Tools
+
+| Tool | Key access | What it does |
+|---|---|---|
+| `list_silos` | Read only | List silos, newest first. |
+| `get_silo_meta` | Read only | Get a silo's metadata without its data. |
+| `read_silo` | Read only | Read a silo's full JSON data. |
+| `query_silo` | Read only | Read part of a silo. |
+| `get_silo_schema` | Read only | Get a silo's JSON Schema and whether it is locked. |
+| `create_silo` | Read & write | Create a new silo. |
+| `update_silo` | Read & write | Rename a silo, change its visibility, or replace its data. |
+| `patch_silo` | Read & write | Change part of a silo's data. |
+| `delete_silo` | Read & write | Permanently delete a silo. |
+
+A **Read only** key gets the five read tools. A **Read & write** key gets all nine.
+
+## Read Tools
+
+### `list_silos`
+
+Lists your silos, newest first, 25 per page. Each entry has the silo's UUID, name, size, visibility, region, and timestamps.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `page` | number | Page number, starting at `1`. Defaults to `1`. |
+
+The result includes `has_more`, which tells the assistant whether there is another page.
+
+### `get_silo_meta`
+
+Returns a silo's name, size in bytes, visibility, region, schema lock state, and timestamps. It does not return the data, so it is the cheapest way to check on a silo.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+
+### `read_silo`
+
+Returns a silo's full JSON data.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+
+For silos over 100 KB, see [Large silos](#large-silos).
+
+### `query_silo`
+
+Reads part of a silo, using the same engine as [Query](/features/query-silo-data) and [Search](/features/search-silo-data). The assistant gives exactly one of `path`, `idx`, or `filters`.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+| `path` | string | Dot-separated keys and array indexes, for example `store.products.0.price`. |
+| `idx` | number | The index of an item in the silo's top-level array. Can be combined with `path` to read a field inside that item. |
+| `filters` | array | Conditions that match items of a top-level array. All of them must match. Can be combined with `path` to pick a field from each match. |
+| `output` | string | Converts the result of a `path` or `idx` query: `json` (default), `text`, `int`, `float`, or `bool`. |
+
+Each filter is an object with three fields:
+
+| Field | Description |
+|---|---|
+| `field` | The field to compare, for example `price`, `address.city`, or `tags..name` to look inside an array field. |
+| `op` | `eq`, `ne`, `gt`, `lt`, `lk`, or `il`. The `lk` and `il` operators match a pattern with `%` as the wildcard. |
+| `value` | A string, number, or boolean to compare against. |
+
+For example, a filter that finds products with a price above 20:
+
+```json
+{ "field": "price", "op": "gt", "value": 20 }
+```
+
+### `get_silo_schema`
+
+Returns the JSON Schema attached to a silo, if any, and whether it is locked. An assistant can use this to learn what shape a write must have before it tries one.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+
+<Note>An assistant can read a schema, but it can't change, lock, unlock, or remove one. Schemas are managed in the console only. See [Schema Lock](/features/schema-lock).</Note>
+
+## Write Tools
+
+These tools are only available to keys with **Read & write** access.
+
+### `create_silo`
+
+Creates a new silo from JSON data and returns its UUID. Your plan's limits on silo count, silo size, and regions apply.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_data` | any JSON | The silo's JSON data. Required. |
+| `file_name` | string | A name for the silo. Up to 255 characters. |
+| `is_public` | boolean | `true` for a public silo. Defaults to `false`. |
+| `region_name` | string | `api`, `sg-01-api`, or `usc-01-api`. Defaults to `api`. |
+
+### `update_silo`
+
+Updates a silo's name or visibility, replaces its data, or any combination of the three.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+| `file_data` | any JSON | New data. It replaces the silo's data completely. |
+| `file_name` | string | A new name. Up to 255 characters. |
+| `is_public` | boolean | `true` to make the silo public, `false` to make it private. |
+
+To change only part of the data, `patch_silo` is the better choice, because the assistant doesn't have to send the whole document again.
+
+<Note>A silo's region can't be changed over MCP. Use the silo's **Settings** tab in the console.</Note>
+
+### `patch_silo`
+
+Changes part of a silo's data with [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) operations.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+| `operations` | array | Between 1 and 1,000 JSON Patch operations. Required. |
+
+The supported operations are `add`, `remove`, `replace`, `move`, `copy`, and `test`. Paths are [JSON Pointers](https://datatracker.ietf.org/doc/html/rfc6901), such as `/products/1/price`. Use `-` to add to the end of an array, as in `/products/-`.
+
+For example, these operations change one price and add a product:
+
+```json
+[
+  { "op": "replace", "path": "/products/1/price", "value": 24.99 },
+  { "op": "add", "path": "/products/-", "value": { "name": "Cap", "price": 12 } }
+]
+```
+
+How a patch is applied:
+
+- **All or nothing.** If any operation fails, none of them are saved.
+- **Checked like any other write.** The patched data must fit your plan's size limit and match a [locked schema](/features/schema-lock).
+- **Safe against conflicts.** If the silo changes while the patch is being applied, nothing is saved and the assistant is asked to read the silo again and retry.
+- **Conditional changes.** A `test` operation at the start makes the patch apply only if a value is still what the assistant expects.
+
+### `delete_silo`
+
+Permanently deletes a silo and its data. This cannot be undone.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_uuid` | string | The silo's UUID. Required. |
+
+## Resources
+
+Silos are also available as MCP **resources**, for clients that let you attach a resource to a conversation.
+
+| | |
+|---|---|
+| **URI** | `jsonsilo://silo/{file_uuid}` |
+| **Type** | `application/json` |
+
+The server lists up to 100 of your silos as resources, newest first. Reading a resource returns the same result as `read_silo`.
+
+## Large Silos
+
+Silos can be many megabytes, which is far more than an assistant can usefully read at once. When a result is over **100 KB**, the server returns a summary instead of the data:
+
+| Field | Description |
+|---|---|
+| `truncated` | Always `true` for a summary. |
+| `size_bytes` | The full size of the result. |
+| `shape` | A compact outline of the data: its keys, their types, and array lengths. |
+| `preview` | The first part of the data as text. |
+| `hint` | A reminder to use `query_silo` to read only the part that is needed. |
+
+This applies to `read_silo`, `query_silo`, and resource reads. With the summary in hand, the assistant can use `query_silo` with a `path`, `idx`, or `filters` to fetch exactly what it needs.
+
+## Errors
+
+When a tool can't do what was asked, it returns an error message that the assistant can read and act on, for example:
+
+| Situation | What the assistant is told |
+|---|---|
+| The silo doesn't exist | `Silo ... not found.` |
+| The data doesn't match a locked schema | The location of the invalid value and why it is invalid. |
+| A patch operation fails | `Patch not applied (no changes were saved).` and the reason. |
+| The silo changed during a patch | To read it again and retry. |
+| The plan's silo limit is reached | To delete a silo or upgrade the plan. |
+| The region isn't on the plan | That the region is not available on the plan. |
+
+## Good to Know
+
+- **Reads are always fresh.** MCP reads skip the cache, so an assistant that writes a silo and reads it back sees its own change.
+- **Writes are logged.** Every create, update, patch, and delete over MCP appears in [Logs](/features/activity-logs).
+- **Data is not echoed back.** After `update_silo`, the assistant gets the silo's metadata, not a copy of the data it just sent.
+- **Silo data is treated as data.** The server tells the assistant that silo content is user content and not instructions to follow.

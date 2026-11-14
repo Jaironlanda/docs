@@ -1,21 +1,46 @@
 ---
 title: Key concepts
+description: 'The terms you will meet throughout JSONsilo: silos, access, keys, regions, schema lock, and MCP.'
 ---
 
 ### What is a Silo?
 
 A silo is a storage container for a JSON file. When you upload a JSON file to JSONsilo, it becomes a silo. Each silo has a unique file UUID that you can use to access the JSON file through our API.
 
+A silo also has a name. The name is for your reference only: it never appears in the JSON served from the silo's URL, and changing it doesn't change the URL.
+
 ### Public vs Private Silo
 
-- **Public Silo**: These silos can be accessed by anyone with the URL. No authentication is required to read the JSON data stored in a public silo.
-- **Private Silo**: These silos are restricted and require an **Access Key** for any operations. Only users with the correct Access Key can read the JSON data in a private silo.
+- **Public Silo**: These silos can be accessed by anyone with the URL. No authentication is required to read the JSON data stored in a public silo. Use them for non-sensitive data such as configuration files, mock API responses, or open data sets.
+- **Private Silo**: These silos are restricted and require an **Access Key** for any operations. Only users with the correct Access Key can read the JSON data in a private silo. Use them for data that only your own apps and services should read.
 
+| | Public Silo | Private Silo |
+|---|---|---|
+| URL | `https://[region-code].jsonsilo.com/public/[file-uuid]` | `https://[region-code].jsonsilo.com/[file-uuid]` |
+| Authentication | None | `X-SILO-KEY` header |
+| [Query](/features/query-silo-data) and [Search](/features/search-silo-data) | Not supported | Supported |
 
-### Access Keys vs Manage Keys
+You choose the access type when you create a silo, and you can switch it later in the silo's **Settings**. Learn more in [Public Silo](/silo-types/public-silo) and [Private Silo](/silo-types/private-silo).
+
+### Access Keys, Manage Keys, and MCP Keys
+
+JSONsilo has three kinds of key, each for a different job.
 
 - **Access Keys**: These keys are used to authenticate API requests for private silos. They allow you to read the JSON data stored in the silo.
 - **Manage Keys**: These keys provide higher-level access, allowing you to perform management operations such as creating, updating, or deleting silos.
+- **MCP Keys**: These keys connect an AI tool, such as Claude Code or Cursor, to your silos over the Model Context Protocol.
+
+| | Access Key | Manage Key | MCP Key |
+|---|---|---|---|
+| Used for | Reading private silos | The [Manage API](/api-reference/introduction) | The [MCP server](/mcp/overview) |
+| Header | `X-SILO-KEY` | `X-MAN-API` | `Authorization: Bearer` |
+| Can read silo data | Yes | Yes | Yes |
+| Can create, update, delete silos | No | Yes | Only with **Read & write** access |
+| Expires | No | After the duration you choose | After the duration you choose |
+
+Keys are not interchangeable. An Access Key can't call the Manage API, and neither an Access Key nor a Manage Key can open the MCP server.
+
+Learn more in [Access Keys](/keys/access-keys), [Manage Keys](/keys/manage-keys), and [MCP Keys](/keys/mcp-keys).
 
 ### Region Codes
 
@@ -24,10 +49,24 @@ JSONsilo is hosted in multiple regions around the world. Each region has a uniqu
 
 | Region Code   | Description            |
 |---------------|------------------------|
-| `api`         | General API region     |
+| `api`         | Germany (default)      |
 | `sg-01-api`   | Singapore region       |
 | `usc-01-api`  | US Central region      |
+
+See [Regions](/regions) for how to move a silo to another region.
 
 ### File UUID
 
 Each silo is assigned a unique identifier (UUID) that is used to access it via the API. The UUID is **unchangeable** and consists of 32 hexadecimal characters separated by 4 hyphens, making it 36 characters long.
+
+### Schema Lock
+
+A schema is a [JSON Schema](https://json-schema.org) attached to a silo that describes the shape its data must have. When you **lock** the schema, JSONsilo rejects every write that doesn't match it, whether the write comes from the console, the Manage API, or an AI tool over MCP. The stored data stays as it was.
+
+Learn more in [Schema Lock](/features/schema-lock).
+
+### MCP
+
+The [Model Context Protocol](https://modelcontextprotocol.io) (MCP) is an open standard that lets AI tools call external services. JSONsilo runs a remote MCP server, so an assistant can list, read, query, and edit your silos when you give it an MCP Key.
+
+Learn more in [MCP Server](/mcp/overview).

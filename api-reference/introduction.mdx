@@ -6,14 +6,16 @@ icon: star
 
 ## JSONSilo Manage API
 
-The JSONSilo Manage API allows you to programmatically manage your JSON silos, including creating, updating, deleting silos, and managing files within those silos.
+The JSONSilo Manage API allows you to programmatically manage your JSON silos, including creating, updating, deleting silos, and reading the data and metadata stored in them.
+
+<Note>To let an AI tool manage your silos instead of your own code, see the [MCP Server](/mcp/overview).</Note>
 
 ### Base URL
 
 The base URL for the JSONSilo Manage API is structured as follows:
 
 ```bash
-https://[region-code].jsonsilo.com/api/v1/manage/
+https://[region-code].jsonsilo.com/api/v1/manage
 ```
 
 > Replace `[region-code]` with the appropriate region code for your silo, and `[file-uuid]` with the unique identifier assigned to your JSON file.
@@ -26,14 +28,14 @@ The JSONSilo Manage API provides the following endpoints:
 
 | Endpoint                     | Method | Description                                 |
 |------------------------------|--------|---------------------------------------------|
-| `/`                          | `POST`   | [Create a new silo](/api-reference/endpoint/create-silo)                         |
-| `/{file_uuid}`               | `DELETE` | [Delete a specific silo](/api-reference/endpoint/delete-silo)                    |
-| `/meta/{file_uuid}`          | `GET`    | [Retrieve metadata for a specific silo](/api-reference/endpoint/get-meta)     |
-| `/{file_uuid}`               | `GET`    | [Retrieve `file_data` for a specific silo](/api-reference/endpoint/get-silo)  |
-| `/silos`                     | `GET`    | [List all silos](/api-reference/endpoint/get-silo-list)                            |
-| `/{file_uuid}`               | `PATCH`  | [Update a specific silo](/api-reference/endpoint/patch-silo)                    |
+| `/api/v1/manage`             | `POST`   | [Create a new silo](/api-reference/endpoint/create-silo)                         |
+| `/api/v1/manage/{file_uuid}` | `DELETE` | [Delete a specific silo](/api-reference/endpoint/delete-silo)                    |
+| `/api/v1/manage/meta/{file_uuid}` | `GET`    | [Retrieve metadata for a specific silo](/api-reference/endpoint/get-meta)     |
+| `/api/v1/manage/{file_uuid}` | `GET`    | [Retrieve `file_data` for a specific silo](/api-reference/endpoint/get-silo)  |
+| `/api/v1/manage/silos`       | `GET`    | [List all silos](/api-reference/endpoint/get-silo-list)                            |
+| `/api/v1/manage/{file_uuid}` | `PATCH`  | [Update a specific silo](/api-reference/endpoint/patch-silo)                    |
 
-
+<Warning>Send the Create Silo request to `/api/v1/manage` with no trailing slash.</Warning>
 
 ### Authentication
 
@@ -54,3 +56,49 @@ curl -X GET "https://api.jsonsilo.com/api/v1/manage/silos" \
      -H "X-MAN-API: YOUR_MANAGE_API_KEY" \
      -H "Content-Type: application/json"
 ```
+
+### Response Codes
+
+| Status | Meaning |
+|--------|---------|
+| `200`  | The request succeeded. |
+| `204`  | The request succeeded and there is nothing to return, for example a page of the silo list with no silos on it. |
+| `400`  | The request body is not valid, or `file_data` is larger than your plan's per-silo size limit. |
+| `401`  | The Manage Key is invalid, was deleted, or has expired. |
+| `402`  | Your free trial has ended. See [Rate Limits](/rate-limits#when-the-trial-ends). |
+| `403`  | The `X-MAN-API` header is missing, or the request goes beyond what your plan allows, such as its silo limit or regions. |
+| `404`  | The silo doesn't exist, the UUID is not valid, or the silo belongs to another account. |
+| `422`  | The silo has a locked schema and the new data doesn't match it. |
+| `429`  | You hit a rate limit. |
+
+Most error responses have a short plain-text message as the body, for example `Invalid API Key`. These have a JSON body instead:
+
+- `400` when the request body has the wrong shape, for example `is_public` is not a boolean.
+- `402` when your free trial has ended.
+- `422` when the data doesn't match a locked schema.
+
+### Schema Lock
+
+If a silo has a [locked schema](/features/schema-lock), an [Update Silo](/api-reference/endpoint/patch-silo) request whose `file_data` doesn't match it returns `422`, and the stored data stays as it was:
+
+```json
+{
+  "message": "Silo data does not match its locked schema.",
+  "errors": [
+    {
+      "path": "/products/1/price",
+      "message": "Instance type \"string\" is invalid. Expected \"number\"."
+    }
+  ]
+}
+```
+
+The Manage API can't read, change, or remove a silo's schema. Use [Get Silo Meta](/api-reference/endpoint/get-meta) to check whether a silo has a schema (`has_schema`) and whether it is locked (`schema_locked`).
+
+### Rate Limits
+
+Manage API requests are rate limited for each account, based on your plan. Responses include `ManageSilo-Req-Limit`, `ManageSilo-Req-Remaining`, and `ManageSilo-Req-Reset` headers. See [Rate Limits](/rate-limits).
+
+### Activity Logs
+
+Every create, update, and delete made through the Manage API is recorded in the console's [Logs](/features/activity-logs) with an **(API)** label.

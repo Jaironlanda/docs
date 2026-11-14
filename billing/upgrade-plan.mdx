@@ -9,17 +9,43 @@ This guide provides step-by-step instructions on how to change your subscription
 
 <Steps>
   <Step title="Go to the Billing Page">
-    Click on the "Billing" menu in the sidebar to view your billing details.
-  </Step>
-  <Step title="Change Plan">
-    Click the `Manage Subscription` button and select `Change Plan` from the dropdown menu.
-    
-    <img 
-      src="/images/billing/change-plan.png" 
-      alt="change subscription plan"
-      className="rounded-lg"
-    />
+    Click **Billing** in the sidebar to view your billing details. You can also click the plan badge next to the JSONsilo logo.
 
-    A dialog will appear showing the available plans. Select the desired plan and follow the prompts to complete the change.
+    The top of the page shows your **Current plan**, when it renews, and your **Usage**: how many silos you have used out of your plan's limit. On the free trial it also shows your trial requests left and when the trial ends.
+
+    {/* TODO: screenshot of the Billing page with the Current plan and Plans sections. Suggested path: /images/billing/billing-page.png */}
+  </Step>
+  <Step title="Choose a Plan">
+    Under **Plans**, compare what each plan includes. Your current plan is marked **Current plan**, and the next plan up is marked **Next step up**.
+
+    Click the `Choose plan` button on the plan you want.
+  </Step>
+  <Step title="Complete the Change">
+    What happens next depends on whether you already have a subscription.
+
+    - **No subscription yet** (free trial or legacy Free plan): You are taken to the checkout to enter your payment details.
+    - **Existing subscription**: A dialog asks you to confirm the switch. Click `Confirm switch`.
   </Step>
 </Steps>
+
+## How You Are Charged When You Switch
+
+- **Upgrade**: You'll be charged a prorated amount on your next invoice, or immediately if the billing interval changes.
+- **Downgrade**: You'll receive a prorated credit toward your next invoice.
+
+## Before You Downgrade
+
+A smaller plan has lower limits. Check [Pricing Plans](/pricing-plans) before you switch, in particular the number of silos and the size per silo.
+
+Features that your new plan doesn't include stop being available:
+
+- **Schema Lock**: An existing lock keeps protecting the silo, but you can no longer change the schema. See [Schema Lock](/features/schema-lock#plans-and-downgrades).
+- **MCP**: Your MCP Keys are kept but stop working until you upgrade again. See [MCP Keys](/keys/mcp-keys#if-your-plan-changes).
+
+## Manage Your Payment Method and Invoices
+
+On the **Billing** page:
+
+- Click `Manage payment method` to update the payment method used for your subscription.
+- Click `Manage subscription` to open the customer portal.
+- Scroll to **Billing history** to see your past invoices and orders. Click `Receipt` to open one.

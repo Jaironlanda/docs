@@ -4,50 +4,97 @@ description: 'Understanding JSONsilo rate limit'
 icon: road-barrier
 ---
 
-# Introduction
+## Introduction
+
 To ensure the stability and reliability of our platform, we have implemented rate limits across all API endpoints. These limits are designed to prevent abuse and ensure fair usage for all users. Below, you will find a detailed breakdown of the rate limits applied to each service.
 
 If you require higher rate limits or have specific use cases that exceed these thresholds, please contact our support team to discuss potential solutions or upgrades to your plan.
 
 ## How Rate Limits Work
 
-Rate limits are measured in requests per time interval, such as per second or per minute, and are applied **per IP address**. For example:
+Each plan has two limits, and a request must pass both:
 
-- **10,000 requests per 20 seconds**: You can make up to 10,000 API requests within a 20-second interval from a single IP address.
-- **20 requests per minute**: You can make up to 20 API requests within a single minute from a single IP address.
+- **Burst limit**: How many requests you can send in quick succession. Think of it as a bucket that holds a fixed number of requests and drains at **1 request per second**. If the bucket is full, the request is rejected. A moment later there is room again.
+- **Daily limit**: How many requests you can send in a 24-hour window. The window starts with your first request and resets 24 hours later.
 
-Once the time interval resets (e.g., the next second or minute begins), your request count is automatically reset to zero, and you can make new requests up to the defined limit.
+If you exceed either limit, you will receive a `429 Too Many Requests` response with one of these messages:
 
-If you exceed the rate limit within the specified time interval, you will receive a `429 Too Many Requests` response. In such cases, you should wait until the interval resets before making additional requests.
+| Message | Meaning | What to do |
+|---|---|---|
+| `Request limit exceeded` | You hit the burst limit. | Slow down and retry after a short pause. |
+| `Daily limit exceeded` | You hit the daily limit. | Wait for the window to reset, or upgrade your plan. |
 
+## Limits by Plan
 
-## Free
+| Plan | Burst limit | Daily limit |
+|---|---|---|
+| Free trial | 100 requests | 1,000 requests in total for the whole trial |
+| Basic | 100 requests | 1,000,000 requests / day |
+| Pro | 500 requests | 10,000,000 requests / day |
+| Free (legacy) | 10 requests | 1,000 requests / day |
+| Pro Plus & Lifetime (legacy) | 500 requests | 10,000,000 requests / day |
 
-| Service          | Rate Limit       |
-|------------------|------------------|
-| Private          | 20 requests/min |
-| Public           | 20 requests/min |
-| Manage API       | 20 requests/min  |
-| Query            | 20 requests/min  |
-| Search           | 20 requests/min  |
+## What Each Limit Applies To
 
+Limits are counted separately for each service, so heavy traffic on one doesn't use up another.
 
-## Pro
+| Service | Counted per | Whose plan sets the limit |
+|---|---|---|
+| Private silo reads, including Query and Search | Silo | The silo's owner |
+| Public silo reads | Silo | The silo's owner |
+| Manage API | Account | The Manage Key's owner |
+| MCP server | Account | The MCP Key's owner |
 
-| Service          | Rate Limit              |
-|------------------|-------------------------|
-| Private          | 10,000 requests / 20 seconds |
-| Public           | 10,000 requests / 20 seconds |
-| Manage API       | 10,000 requests / 20 seconds |
-| Query            | 10,000 requests / 20 seconds |
-| Search           | 10,000 requests / 20 seconds |
+For example, on the Pro plan each of your public silos can serve 10,000,000 requests a day on its own.
 
-## Pro Plus & Lifetime
+## Rate Limit Headers
 
-| Service          | Rate Limit              |
-|------------------|-------------------------|
-| Private          | 20,000 requests / 20 seconds |
-| Public           | 20,000 requests / 20 seconds |
-| Manage API       | 20,000 requests / 20 seconds |
-| Query            | 20,000 requests / 20 seconds |
-| Search           | 20,000 requests / 20 seconds |
+Successful responses include headers that show where you stand against the **daily** limit.
+
+```
+PrivateSilo-Req-Limit: 1000000
+PrivateSilo-Req-Remaining: 999998
+PrivateSilo-Req-Reset: 1755000000
+```
+
+| Header | Description |
+|---|---|
+| `*-Req-Limit` | Your daily limit. |
+| `*-Req-Remaining` | Requests left in the current window. |
+| `*-Req-Reset` | When the window resets, as a Unix timestamp in seconds. |
+
+The prefix depends on the service:
+
+| Service | Header prefix |
+|---|---|
+| Private silo reads | `PrivateSilo-Req-` |
+| Public silo reads | `PublicSilo-Req-` |
+| Manage API | `ManageSilo-Req-` |
+| MCP server | `McpSilo-Req-` |
+
+## Free Trial Limits
+
+The free trial has one extra limit: **1,000 requests in total**, across your silo URLs, the Manage API, and MCP. Unlike the daily limit, this count never resets.
+
+While you are on the trial, responses include these headers:
+
+| Header | Description |
+|---|---|
+| `Trial-Requests-Limit` | The trial's total request limit. |
+| `Trial-Requests-Remaining` | Requests left in your trial. |
+| `Trial-Expires` | When the trial ends, as a Unix timestamp in seconds. |
+
+### When the trial ends
+
+Once the 2 days are up or the 1,000 requests are used, requests return `402 Payment Required` with this body:
+
+```json
+{
+  "error": "Trial ended",
+  "code": "trial_ended",
+  "reason": "time",
+  "upgrade_url": "https://console.jsonsilo.com/billing"
+}
+```
+
+`reason` is `time` when the 2 days have passed, or `cap` when the requests ran out. [Choose a plan](/billing/upgrade-plan) to bring your silos back online.

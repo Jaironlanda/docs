@@ -5,28 +5,30 @@ description: 'Dynamically query silo data'
 
 ## Introduction
 
-JSONsilo now supports querying data from silos. This feature lets you dynamically retrieve and interact with silo data programmatically. By appending specific query parameters to your silo URL, you can extract precise information from your JSON data without needing to download or manually parse the entire dataset.
+JSONsilo supports querying data from silos. This feature lets you dynamically retrieve and interact with silo data programmatically. By appending specific query parameters to your silo URL, you can extract precise information from your JSON data without needing to download or manually parse the entire dataset.
 
 > **This feature is currently supported only for <u>Private Silos</u>.**
 
 ## Limitations
 
-While the query functionality is a powerful feature, it is still in its early stages and has some limitations:
+While the query functionality is a powerful feature, it has some limitations:
 
-- Selecting specific indices or ranges based on index is limited.
+- Selecting a range of indices is not supported. `idx` selects one item.
 - Query performance may vary depending on the size and complexity of the silo data.
 - Only private silos are supported; public silos are not yet supported.
 
 
-# Usage
+## Usage
 
 Below are the available query parameters you can use:
-
-> **Note:** Ensure the parameters are in the correct order when combining them in a single request.
 
 - `idx`: Specifies the index of the item to retrieve.
 - `path`: Specifies the path to a specific field within the JSON data.
 - `output`: Specifies the desired output format or data type.
+
+Add them to your private silo URL and send your [Access Key](/keys/access-keys) in the `X-SILO-KEY` header, as with any private silo request.
+
+> **Note:** The order of the parameters in the URL doesn't matter.
 
 ## Parameters
 
@@ -70,7 +72,8 @@ Response:
 
 > **Note:**
 >
-> - If you use `idx` on non-array data, the result will be `null`.
+> - `idx` must be a whole number, `0` or greater.
+> - If you use `idx` on non-array data, or the index is out of range, the API returns `404`.
 > - You can combine the `idx` parameter with the `path` parameter for more advanced queries.
 
 ---
@@ -186,12 +189,13 @@ Response:
 > #### Notes
 >
 > - The `path` parameter is case-sensitive and must match the exact structure of your data.
-> - If the specified path does not exist, the response will be `null` or return an error.
+> - A path may contain letters, numbers, underscores (`_`), and dots (`.`) only. Any other character returns `400`.
+> - If the specified path does not exist, the API returns `404`.
 > - You can combine the `path` parameter with other parameters (such as `idx` and `output`) for more advanced queries.
 
 ### `output`
 
-<Warning>This parameter won't work without the `idx` and `path` parameters.</Warning>
+<Warning>This parameter only works together with `path`. It is ignored when you send it on its own or with `idx` alone.</Warning>
 
 The `output` parameter lets you choose the format or data type of the response. By default, the API returns data in `json` format, but you can use the `output` parameter to convert the result to a format that fits your needs.
 
@@ -204,46 +208,11 @@ Suppose your silo data looks like this:
   "backup": {
   "enabled": true,
   "maxBackups": "5",
+  "retentionDays": 30,
   "backupLocation": "/user/data/backups/"
   }
 }
 ```
-
-To retrieve the value of `backup.enabled` as its default type (boolean), you would use:
-
-```bash
-?path=backup.enabled
-```
-
-Example Request:
-
-```bash
-GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.enabled
-```
-
-Response:
-
-```text
-true
-```
-
-To convert the value of `backup.enabled` to a string, you would use:
-
-```bash
-?path=backup.enabled&output=text
-```
-Example Request:
-
-```bash
-GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.enabled&output=text
-```
-Response:
-
-```text
-"true"
-```
-
----
 
 To retrieve the value of `backup.maxBackups` as its default type (string), you would use:
 
@@ -280,21 +249,60 @@ Response:
 5
 ```
 
+---
+
+To retrieve the value of `backup.retentionDays` as its default type (number), you would use:
+
+```bash
+?path=backup.retentionDays
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.retentionDays
+```
+
+Response:
+
+```text
+30
+```
+
+To convert the value of `backup.retentionDays` to a string, you would use:
+
+```bash
+?path=backup.retentionDays&output=text
+```
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?path=backup.retentionDays&output=text
+```
+Response:
+
+```text
+"30"
+```
+
 
 #### Supported Output Types
 
 | Output Type | Description |
 |-------------|-------------|
+| `json`      | Returns the value as it is stored. This is the default. |
 | `text`      | Converts the result to a plain text string. |
 | `int`       | Converts the result to an integer, if possible. |
 | `float`     | Converts the result to a floating-point number, if possible. |
-| `bool`      | Converts the result to a boolean value. |
+| `bool`      | Converts a boolean to `1` (true) or `0` (false). |
 | `date`      | `Not supported` |
 | `timestamp` | `Not supported` |
 
 
 > **Notes:**
-> - If the conversion is not possible (e.g., converting a non-numeric string to `int`), the API will return an error or `null`.
+> - Booleans are converted as numbers. With `text`, `int`, or `bool`, the value `true` becomes `1` and `false` becomes `0`. Leave `output` out to get `true` or `false`.
+> - If the conversion is not possible (e.g., converting a non-numeric string to `int`), the result is `0`.
+> - An unsupported output type returns `400`.
 > - The `output` parameter can be combined with `path` and `idx` for advanced queries.
 > - Ensure the data at the specified path is compatible with the requested output type.
 
@@ -333,10 +341,6 @@ Suppose your silo data looks like this:
   }
 ]
 ```
-
-#### Combine `idx` and `path`
-
-You can combine the `idx` and `path` parameters to perform detailed queries on array-based JSON data. This is useful for selecting a specific item from an array and extracting a particular field from that item.
 
 #### Basic Example
 
@@ -383,9 +387,25 @@ Response:
 ```
 
 > **Notes:**
-> - If the specified `idx` or `path` does not exist, the API will return `null`.
+> - If the specified `idx` or `path` does not exist, the API returns `404`.
 > - The `path` parameter is case-sensitive and must match the exact structure of your data.
 > - You can combine `idx`, `path`, and `output` for advanced queries, such as converting the result to a specific type.
->   - **Example**: `?idx=2&path=contacts.age&output=text`
+>   - **Example**: `?idx=2&path=age&output=text`
 >   - **Output**: `"50"` (convert int to text)
 
+## Which Parameters Take Priority
+
+A request runs as one kind of query. If you send parameters for more than one, the first match in this list wins:
+
+1. `q` runs a [search](/features/search-silo-data). An optional `path` picks a field from each match.
+2. `idx` runs an index query. An optional `path` picks a field from that item.
+3. `path` on its own runs a path query.
+4. With none of them, the whole silo is returned.
+
+## Caching
+
+Query results are cached for up to 5 minutes. A query made right after you update a silo may briefly return the previous data.
+
+## Rate Limits
+
+Queries count as private silo reads. See [Rate Limits](/rate-limits).

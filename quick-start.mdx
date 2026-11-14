@@ -3,11 +3,47 @@ title: Quick Start
 description: 'Get started quickly with JSONsilo'
 ---
 
-Before you begin, ensure that you have a JSONsilo account. If you don't have one yet, [sign up here](https://console.jsonsilo.com/signup) and complete the onboarding process.
+This guide takes you from a new account to your first request. The console walks you through the same three steps on its **Get started** screen.
 
-During the onboarding process, you will be prompted to create and deploy your first JSON file to JSONsilo. Follow the instructions provided in the onboarding wizard to deploy your JSON.
+## Before you begin
 
-After completing the onboarding process and deploying your JSON file to JSONsilo, you will get a unique URL to access it. The URL format depends on whether your silo is private or public:
+[Sign up here](https://console.jsonsilo.com/signup) if you don't have a JSONsilo account yet. After you sign up, we send a verification link to your email. Verify your email, then sign in.
+
+<Note>New accounts start on a 2-day trial with every feature switched on. See [Pricing Plans](/pricing-plans#free-trial) for what the trial includes.</Note>
+
+## Serve your first JSON in three steps
+
+Open **Get started** at the top of the sidebar in the [console](https://console.jsonsilo.com). It tracks your progress and unlocks each step when the one before it is done.
+
+{/* TODO: screenshot of the Get started screen. Suggested path: /images/quick-start/get-started.png */}
+
+<Steps>
+  <Step title="Create an API key">
+    An Access Key authenticates requests to your private silos.
+
+    Click `Create API key`, enter a key name, and click `Create key`. The **Key created** dialog shows the key once. Copy it, tick **I've stored this key somewhere safe**, and click `Done`.
+
+    <Warning>Copy the key now. You won't be able to see it again.</Warning>
+
+    You can create more keys later under **Keys**. See [Access Keys](/keys/access-keys).
+  </Step>
+  <Step title="Create your first silo">
+    A silo is a JSON document you can read and write to via the API.
+
+    Click `Create silo`, give it a name, pick a region, choose **Private** or **Public** access, and paste or upload your starting JSON. Then click `Create silo`.
+
+    For a field-by-field walkthrough, see [Create Silo](/how-to/create-silo).
+  </Step>
+  <Step title="Make your first request">
+    The last step shows a ready-to-paste `curl` command with your silo's real URL. For a private silo, replace the placeholder with your Access Key.
+
+    Open the silo for JavaScript and Python examples.
+  </Step>
+</Steps>
+
+## Silo URL format
+
+Every silo gets a unique URL. The format depends on whether your silo is private or public:
 
 <Note>Replace `[region-code]` with the appropriate region code for your silo, and `[file-uuid]` with the unique identifier assigned to your JSON file.</Note>
 
@@ -25,67 +61,32 @@ https://[region-code].jsonsilo.com/public/[file-uuid]
 
 | Region Code   | Description            |
 |---------------|------------------------|
-| `api`         | General API region     |
+| `api`         | Germany (default)      |
 | `sg-01-api`   | Singapore region       |
 | `usc-01-api`  | US Central region      |
 
-For more details about supported regions, please refer to the [Regions Documentation](/how-to/manage/region).
+For more details about supported regions, please refer to the [Regions Documentation](/regions).
 
 #### Retrieving your file uuid and region code
 
-To find your `file-uuid` and `region-code`, sign in to your JSONsilo console and navigate to the "Silos" and click one of your silos from the list.
+You don't have to build the URL by hand. Sign in to the console, open **Silos**, and click one of your silos.
 
-<img 
-  src="/images/quick-start/1.png" 
-  alt="quick start silo list"
-  className="rounded-lg"
-/>
+On the **Overview** tab:
 
- Here, you will see the details of your silo, including the file UUID and the region where your silo is hosted.
- 
-<img 
-  src="/images/quick-start/2.png" 
-  alt="quick start silo details"
-  className="rounded-lg"
-/>
+- The **Silo URL** card (or **Public URL** for a public silo) shows the full URL with a copy button.
+- The **Details** card shows the **Silo UUID** and the **Region**. Click the UUID to copy it.
 
+{/* TODO: screenshot of the silo Overview tab with the URL and Details cards. Suggested path: /images/quick-start/silo-overview.png */}
+
+You can also copy either value from the silo list: open the actions menu at the end of a row and choose `Copy URL` or `Copy UUID`.
 
 ### Retrieving your Access Key for Private Silo
 
-To retrieve your Access Key for a private silo, go to the "Keys" menu in your JSONsilo console and click the `Manage` button.
-
-<img 
-  src="/images/quick-start/3.png" 
-  alt="quick start access key"
-  className="rounded-lg"
-/>
-
-
-Here, you can create a new Access key or view your existing keys. Click the `Create new Access Key` button to generate a new key if you don't have one yet.
-<img 
-  src="/images/quick-start/4.png" 
-  alt="quick start create access key"
-  className="rounded-lg"
-/>
-
-A dialog will appear to prompt you to enter a key name for your Access Key. After entering the name, click the `Create access key` button to generate the key.
-
-<img 
-  src="/images/quick-start/5.png" 
-  alt="quick start generated access key"
-  className="rounded-lg"
-/>
+To create an Access Key for a private silo, open **Keys** in the sidebar and select **Access keys**. Click `New access key`, enter a key name, and click `Create key`.
 
 After creating the Access Key, make sure to copy and save it securely, as you will need it to access your private silo.
 
-<img 
-  src="/images/quick-start/6.png" 
-  alt="quick start generated access key"
-  className="rounded-lg"
-/>
-
-<Warning>If you lose your Access Key, you can generate a new one by following the same steps. Make sure to revoke any old keys that you no longer use to keep your account secure.</Warning>
-
+<Warning>If you lose your Access Key, you can create a new one by following the same steps. Make sure to delete any old keys that you no longer use to keep your account secure.</Warning>
 
 ### Accessing Your JSON File
 
@@ -192,3 +193,10 @@ Below are examples of how to access your JSON file using the generated URL.
     ```
   </Tab>
 </Tabs>
+
+## What's next?
+
+- [Lock a schema](/features/schema-lock) to reject writes that would break the apps reading your data.
+- [Connect an AI tool](/mcp/overview) such as Claude Code or Cursor to read and edit silos over MCP.
+- [Query](/features/query-silo-data) and [search](/features/search-silo-data) a private silo to read only the part you need.
+- [Manage silos from your own code](/api-reference/introduction) with a Manage Key.

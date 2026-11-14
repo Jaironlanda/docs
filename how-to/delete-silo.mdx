@@ -11,10 +11,23 @@ This page is a guide on how to delete a silo through the user console.
 
 <Warning>Once Silo is deleted, there is no going back. Please be certain.</Warning>
 
-To delete silo, go to **Dashboard** > **[Select Silo]** > scroll to the bottom, and in the *Settings > Danger Zone* section, click the `Delete` button to delete your silo.
+<Steps>
+  <Step title="Open the silo's settings">
+    Click **Silos** in the sidebar, open the silo you want to delete, and click the **Settings** tab.
+  </Step>
+  <Step title="Click Delete silo">
+    At the bottom of the tab, click the `Delete silo…` button.
+  </Step>
+  <Step title="Confirm the deletion">
+    A confirmation dialog shows the silo's name, region, and size. Type the silo name to confirm, then click `Delete silo`.
 
-<img className="rounded" height="200" noZoom src="/images/manage-silo/delete.png" />
+    <Tip>Click the silo name in the dialog to copy it.</Tip>
+  </Step>
+</Steps>
 
-When you click the `Delete` buttom, a confirmation message will appear, asking you to re-enter the silo name confirm the deletion of the silo.
+The silo and its data are removed, and its URL stops working. Any app that still reads the URL receives a `404` response.
 
-<img className="rounded" height="200" noZoom src="/images/view-silo/silo-setting-2.png" />
+## Other ways to delete a silo
+
+- **Manage API**: Send a [Delete Silo](/api-reference/endpoint/delete-silo) request with a Manage Key.
+- **MCP**: Ask a connected AI tool with a **Read & write** key to delete it. See [MCP Tools](/mcp/tools).

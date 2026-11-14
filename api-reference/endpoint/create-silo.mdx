@@ -1,4 +1,8 @@
 ---
 title: 'Create Silo'
-openapi: 'POST /api/v1/manage/'
+openapi: 'POST /api/v1/manage'
 ---
+
+> - Send this request to `/api/v1/manage` with no trailing slash.
+> - `region_name` is required. Use `api` for the default region. The region must be available on your [plan](/pricing-plans).
+> - A new silo has no schema, so the data is not checked against one. To protect its shape, [lock a schema](/features/schema-lock) in the console afterwards.

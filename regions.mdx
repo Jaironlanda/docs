@@ -30,6 +30,19 @@ JSONsilo is committed to delivering global availability, powering millions of re
 | United States: Central | `usc-01-api` | Available |
 | United States: West    |  N/A    | Coming Soon |
 
+## Region Base URLs
+
+The region code is the first part of a silo's URL.
+
+| Region | Code | Base URL |
+|--------|------|----------|
+| Germany | `api` | `https://api.jsonsilo.com` |
+| Singapore | `sg-01-api` | `https://sg-01-api.jsonsilo.com` |
+| United States | `usc-01-api` | `https://usc-01-api.jsonsilo.com` |
+
+## Region Availability
+
+All three regions are available during the free trial and on the Basic and Pro plans. Accounts on the legacy Free plan can use the Germany (`api`) region only. See [Pricing Plans](/pricing-plans).
 
 ## How to Change Silo Region
 
@@ -40,35 +53,19 @@ To change the region of your silo, follow these steps:
 
 <Steps>
   <Step title="Go to the Silos Page">
-    Click the "Silos" menu in the sidebar to view your list of silos. Select the silo you want to update by clicking its name.
-
-    <img 
-      src="/images/quick-start/1.png" 
-      alt="manage silo"
-      className="rounded-lg"
-    />
-
-
+    Click **Silos** in the sidebar to view your list of silos. Select the silo you want to update by clicking its name.
   </Step>
-  <Step title="Change the Region">
-    Scroll to the bottom of the silo details page, and in the *Settings* section, click the `Manage` button to update your silo region.
+  <Step title="Open the Settings Tab">
+    On the silo page, click the **Settings** tab and find the **Region** setting.
 
-    <img 
-      src="/images/change-region/1.png" 
-      alt="manage silo region"
-      className="rounded-lg"
-    />
+    {/* TODO: screenshot of the Region setting on the silo Settings tab. Suggested path: /images/change-region/settings-region.png */}
   </Step>
 
   <Step title="Select New Region">
-    In the dialog, select the desired region from the list and click the `Save` button to save your changes.
+    Click the region you want. A dialog asks you to confirm the move, for example **Move silo to Singapore?** Click `Confirm` to save your changes.
 
-    <Danger>Changing this will update your silo URL.</Danger>
-
-    <img 
-      src="/images/change-region/2.png" 
-      alt="select silo region"
-      className="rounded-lg"
-    />
+    <Danger>Changing this updates your silo URL. Update any links using the old URL.</Danger>
   </Step>
 </Steps>
+
+You can also change a silo's region through the Manage API by sending `region_name` in an [Update Silo](/api-reference/endpoint/patch-silo) request.
