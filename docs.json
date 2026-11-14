@@ -4,15 +4,31 @@
   "name": "JSONsilo.com",
   "description": "Guides and API reference for JSONsilo: host JSON, read it from a URL, lock its schema, and connect AI tools over MCP.",
   "colors": {
-    "primary": "#262626",
-    "light": "#f0f5f4",
-    "dark": "#262626"
+    "primary": "#3451d1",
+    "light": "#a9b6f2",
+    "dark": "#3451d1"
+  },
+  "background": {
+    "color": {
+      "light": "#f6f6f4",
+      "dark": "#16161a"
+    }
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "styling": {
+    "codeblocks": "dark"
   },
   "logo": {
-    "light": "/logo/favicon-192x192.png",
-    "dark": "/logo/favicon-192x192.png"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://jsonsilo.com"
   },
-  "favicon": "/favicon-192x192.png",
+  "favicon": "/logo/mark.png",
   "contextual": {
     "options": ["copy", "view", "claude", "chatgpt", "perplexity", "mcp", "cursor", "vscode"]
   },

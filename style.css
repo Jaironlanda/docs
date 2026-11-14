@@ -1,0 +1,29 @@
+/*
+ * JSONsilo theme overrides for Mintlify.
+ *
+ * Colours, background, body font and logo live in docs.json. This file covers what
+ * docs.json can't express, matching jsonsilo-v5 (console) and jsonsilo-landingpage-latest:
+ * Inter for chrome, Geist Mono for anything a developer copies, tight heading tracking,
+ * and the brand blue for text selection.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap");
+
+code,
+pre,
+kbd,
+samp,
+.font-mono {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
+/* Inter needs negative tracking to stop large headings looking loose. */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background-color: #3451d1;
+  color: #ffffff;
+}
