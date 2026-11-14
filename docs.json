@@ -13,6 +13,9 @@
     "dark": "/logo/favicon-192x192.png"
   },
   "favicon": "/favicon-192x192.png",
+  "contextual": {
+    "options": ["copy", "view", "claude", "chatgpt", "perplexity", "mcp", "cursor", "vscode"]
+  },
   "navbar": {
     "links": [
       {

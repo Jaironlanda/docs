@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "JSONsilo Manage API",
-    "description": "Create, read, update, and delete silos programmatically with a Manage Key.",
+    "description": "Create, read, update, and delete silos programmatically with a Manage Key.\n\n**Authentication:** send your Manage Key in the `X-MAN-API` header on every request. Create one in the console under **Keys > Manage keys**.\n\n**Base URL:** `https://[region-code].jsonsilo.com/api/v1/manage`. For requests about a specific silo, use the base URL of the region the silo is stored in: `api` (Germany, default), `sg-01-api` (Singapore), or `usc-01-api` (United States).\n\n**Errors:** most error responses have a short plain-text body. `400` (invalid body), `402` (trial ended), and `422` (locked schema mismatch) return JSON.\n\n**Rate limits:** requests are limited per account by plan. Successful responses include `ManageSilo-Req-Limit`, `ManageSilo-Req-Remaining`, and `ManageSilo-Req-Reset` headers. See https://docs.jsonsilo.com/rate-limits.",
     "version": "0.1.0"
   },
   "servers": [
@@ -130,10 +130,32 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
+              }
             }
           },
           "204": {
-            "description": "No Content. There are no silos on this page. The response has no body."
+            "description": "No Content. There are no silos on this page. The response has no body.",
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -173,7 +195,8 @@
               "type": "string",
               "format": "uuid",
               "title": "File Uuid"
-            }
+            },
+            "example": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b"
           }
         ],
         "responses": {
@@ -222,7 +245,9 @@
                     },
                     "user_uuid": {
                       "type": "string",
-                      "description": "The ID of the account that owns the silo."
+                      "description": "The ID of the account that owns the silo.",
+                      "format": "uuid",
+                      "example": "a3c2e8d0-5f4b-4e1a-9c7d-1b2e3f4a5b6c"
                     },
                     "file_size_bytes": {
                       "type": "integer",
@@ -241,6 +266,17 @@
                     }
                   }
                 }
+              }
+            },
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
               }
             }
           },
@@ -285,7 +321,8 @@
               "type": "string",
               "format": "uuid",
               "title": "File Uuid"
-            }
+            },
+            "example": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b"
           }
         ],
         "responses": {
@@ -310,6 +347,17 @@
                   "name": "John Doe",
                   "age": 58
                 }
+              }
+            },
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
               }
             }
           },
@@ -352,7 +400,8 @@
               "type": "string",
               "format": "uuid",
               "title": "File Uuid"
-            }
+            },
+            "example": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b"
           }
         ],
         "requestBody": {
@@ -361,6 +410,39 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UpdateSilo"
+              },
+              "examples": {
+                "replace_data": {
+                  "summary": "Replace the silo's data",
+                  "description": "`file_data` replaces the whole document. Send the full JSON, not only the changed fields.",
+                  "value": {
+                    "file_data": {
+                      "maintenance_mode": true,
+                      "min_app_version": "2.4.0",
+                      "features": {
+                        "new_checkout": true
+                      }
+                    }
+                  }
+                },
+                "rename": {
+                  "summary": "Rename the silo",
+                  "value": {
+                    "file_name": "app-config-prod"
+                  }
+                },
+                "make_public": {
+                  "summary": "Make the silo public (changes its URL)",
+                  "value": {
+                    "is_public": true
+                  }
+                },
+                "move_region": {
+                  "summary": "Move the silo to another region (changes its URL)",
+                  "value": {
+                    "region_name": "usc-01-api"
+                  }
+                }
               }
             }
           }
@@ -408,7 +490,14 @@
                         }
                       ],
                       "description": "The data stored in the silo after the update.",
-                      "title": "File Data"
+                      "title": "File Data",
+                      "example": {
+                        "maintenance_mode": true,
+                        "min_app_version": "2.4.0",
+                        "features": {
+                          "new_checkout": true
+                        }
+                      }
                     },
                     "created_at": {
                       "type": "string",
@@ -424,6 +513,17 @@
                     }
                   }
                 }
+              }
+            },
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
               }
             }
           },
@@ -472,12 +572,24 @@
               "type": "string",
               "format": "uuid",
               "title": "File Uuid"
-            }
+            },
+            "example": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response. The silo was deleted. The response has no body."
+            "description": "Successful Response. The silo was deleted. The response has no body.",
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
+              }
+            }
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -516,6 +628,43 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CreateSilo"
+              },
+              "examples": {
+                "private_object": {
+                  "summary": "Private silo with a JSON object",
+                  "value": {
+                    "file_name": "app-config",
+                    "file_data": {
+                      "maintenance_mode": false,
+                      "min_app_version": "2.4.0",
+                      "features": {
+                        "new_checkout": true
+                      }
+                    },
+                    "region_name": "api",
+                    "is_public": false
+                  }
+                },
+                "public_array": {
+                  "summary": "Public silo with an array, in Singapore",
+                  "value": {
+                    "file_name": "product-catalog",
+                    "file_data": [
+                      {
+                        "id": 1,
+                        "name": "Mug",
+                        "price": 12.5
+                      },
+                      {
+                        "id": 2,
+                        "name": "T-shirt",
+                        "price": 20
+                      }
+                    ],
+                    "region_name": "sg-01-api",
+                    "is_public": true
+                  }
+                }
               }
             }
           }
@@ -555,6 +704,17 @@
                   }
                 }
               }
+            },
+            "headers": {
+              "ManageSilo-Req-Limit": {
+                "$ref": "#/components/headers/ManageSilo-Req-Limit"
+              },
+              "ManageSilo-Req-Remaining": {
+                "$ref": "#/components/headers/ManageSilo-Req-Remaining"
+              },
+              "ManageSilo-Req-Reset": {
+                "$ref": "#/components/headers/ManageSilo-Req-Reset"
+              }
             }
           },
           "400": {
@@ -589,7 +749,8 @@
           "file_name": {
             "type": "string",
             "title": "File Name",
-            "description": "Choose a name for your silo that is easy to remember and understand. Rest assured, the silo name will not affect development or any sensitive aspects."
+            "description": "Choose a name for your silo that is easy to remember and understand. Rest assured, the silo name will not affect development or any sensitive aspects.",
+            "example": "app-config"
           },
           "file_data": {
             "anyOf": [
@@ -602,7 +763,14 @@
               }
             ],
             "title": "File Data",
-            "description": "The data you want to store in the silo. It can be a JSON `object` or an `array of objects`."
+            "description": "The data you want to store in the silo. It can be a JSON `object` or an `array of objects`.",
+            "example": {
+              "maintenance_mode": false,
+              "min_app_version": "2.4.0",
+              "features": {
+                "new_checkout": true
+              }
+            }
           },
           "region_name": {
             "type": "string",
@@ -612,13 +780,15 @@
               "sg-01-api",
               "usc-01-api"
             ],
-            "description": "Choose the region where you want to store your data. Use `api` for the default region. The region must be available on your plan."
+            "description": "Choose the region where you want to store your data. Use `api` for the default region. The region must be available on your plan.",
+            "example": "api"
           },
           "is_public": {
             "type": "boolean",
             "title": "Is Public",
             "default": false,
-            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private."
+            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private.",
+            "example": false
           }
         }
       },
@@ -629,7 +799,8 @@
           "file_name": {
             "type": "string",
             "title": "File Name",
-            "description": "A new name for the silo."
+            "description": "A new name for the silo.",
+            "example": "app-config"
           },
           "file_data": {
             "anyOf": [
@@ -642,7 +813,14 @@
               }
             ],
             "title": "File Data",
-            "description": "New data for the silo. It replaces the existing data completely. If the silo has a locked schema, the data must match it."
+            "description": "New data for the silo. It replaces the existing data completely. If the silo has a locked schema, the data must match it.",
+            "example": {
+              "maintenance_mode": false,
+              "min_app_version": "2.4.0",
+              "features": {
+                "new_checkout": true
+              }
+            }
           },
           "region_name": {
             "type": "string",
@@ -652,12 +830,14 @@
               "sg-01-api",
               "usc-01-api"
             ],
-            "description": "Move the silo to another region. The region must be available on your plan. Changing the region changes the silo's URL."
+            "description": "Move the silo to another region. The region must be available on your plan. Changing the region changes the silo's URL.",
+            "example": "sg-01-api"
           },
           "is_public": {
             "type": "boolean",
             "title": "Is Public",
-            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private. Changing the access mode changes the silo's URL."
+            "description": "Silo access mode. If `true`, the silo is public; if `false`, the silo is private. Changing the access mode changes the silo's URL.",
+            "example": true
           }
         }
       },
@@ -708,7 +888,8 @@
               "time",
               "cap"
             ],
-            "description": "`time` when the trial period is over, `cap` when the trial's requests are used up."
+            "description": "`time` when the trial period is over, `cap` when the trial's requests are used up.",
+            "example": "time"
           },
           "upgrade_url": {
             "type": "string",
@@ -756,7 +937,16 @@
             "schema": {
               "type": "string"
             },
-            "example": "Invalid API Key"
+            "examples": {
+              "invalid": {
+                "summary": "Invalid or deleted key",
+                "value": "Invalid API Key"
+              },
+              "expired": {
+                "summary": "Expired key",
+                "value": "API Key Expired"
+              }
+            }
           }
         }
       },
@@ -803,13 +993,22 @@
         }
       },
       "TooManyRequests": {
-        "description": "Too Many Requests. You hit a rate limit.",
+        "description": "Too Many Requests. You hit the burst limit (retry after a short pause) or the daily limit (wait for the window to reset or upgrade your plan).",
         "content": {
           "text/plain": {
             "schema": {
               "type": "string"
             },
-            "example": "Request limit exceeded"
+            "examples": {
+              "burst": {
+                "summary": "Burst limit",
+                "value": "Request limit exceeded"
+              },
+              "daily": {
+                "summary": "Daily limit",
+                "value": "Daily limit exceeded"
+              }
+            }
           }
         }
       }
@@ -817,10 +1016,39 @@
     "securitySchemes": {
       "silo_api_key": {
         "type": "apiKey",
-        "description": "The JSONSilo Manage API Key",
+        "description": "A JSONsilo Manage Key, sent in the `X-MAN-API` header. Create one in the console under **Keys > Manage keys**. A deleted or expired key returns `401`.",
         "in": "header",
         "name": "X-MAN-API"
       }
+    },
+    "headers": {
+      "ManageSilo-Req-Limit": {
+        "description": "Your daily Manage API request limit.",
+        "schema": {
+          "type": "integer",
+          "example": 1000000
+        }
+      },
+      "ManageSilo-Req-Remaining": {
+        "description": "Requests left in the current 24-hour window.",
+        "schema": {
+          "type": "integer",
+          "example": 999998
+        }
+      },
+      "ManageSilo-Req-Reset": {
+        "description": "When the window resets, as a Unix timestamp in seconds.",
+        "schema": {
+          "type": "integer",
+          "example": 1755000000
+        }
+      }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Manage",
+      "description": "Manage silos and their JSON data with a Manage Key."
+    }
+  ]
 }
