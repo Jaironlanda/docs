@@ -1,37 +1,79 @@
 ---
-title: JSON Editor
-description: Learn how to use the JSON Editor
+title: Data & Schema Editor
+sidebarTitle: Data & Schema Editor
+description: Learn how to use the Data & schema editor
 ---
 
-# What is JSON Editor?
+## What is the Data & Schema Editor?
 
-The JSON Editor is a powerful tool that allows you to view, edit, and manage your JSON data directly within the JSONsilo console. It provides an intuitive interface for working with JSON files, making it easier to manipulate and understand complex data structures.
+The Data & schema editor is a powerful tool that allows you to view, edit, and manage your JSON data directly within the JSONsilo console. It puts a silo's JSON and its [JSON Schema](/features/schema-lock) side by side, so a value that doesn't fit the schema is flagged in both at once.
+
+To open it, go to **Silos**, open a silo, and click the **Data & schema** tab.
+
+<Frame><img src="/images/json-editor/data-and-schema.png" alt="Data & schema tab in the side-by-side layout" /></Frame>
 
 ## Features
 
 - **Syntax Highlighting:** The editor highlights JSON syntax, making it easier to read and identify different elements within your data.
 - **Validation:** It automatically checks for JSON syntax errors, helping you ensure that your data is correctly formatted.
+- **Schema Checks:** With a schema saved, the editor marks any value that doesn't match it as you type.
 - **Editing Tools:** The editor includes features like auto-completion, find and replace, and formatting options to streamline your editing process.
-- **Minimap:** A minimap provides an overview of your JSON document, allowing for quick navigation through large files.
-- ... and more!
+- **Outline:** A list of the top-level keys or items provides an overview of your JSON document, allowing for quick navigation through large files.
+- **Changes View:** See a diff of your unsaved edits before you save them.
 
-## Editor Interface
+## Layout
 
-<img src="/images/json-editor/1.png" alt="JSON Editor Interface" className="rounded-lg"/>
+Use the **Layout** switch above the panes to choose what you see.
 
-1. **Manual/Upload Toggle:** Switch between manual editing and uploading a JSON file.
-2. **Download Button:** Download the current JSON data to your local machine.
-3. **Save Button:** Save changes made to the JSON data.
-4. **Save & Close Button:** Save changes and exit the editor.
-5. **Issue Indicator:** Displays the number of syntax issues in the JSON data.
-6. **Status Indicator:** Shows whether there are unsaved changes.
-7. **Editor Theme Toggle:** Choose between light and dark themes for the editor.
-8. **Close Button:** Exit the JSON editor without saving changes.
-9. **Editor Area:** The main area where you can view and edit your JSON data.
-10. **Minimap:** A small overview of the entire JSON document for easy navigation.
+| Layout | What it shows |
+|---|---|
+| **Data** | The data editor at full width. |
+| **Side by side** | The data editor and the schema editor next to each other. This is the default. |
+| **Schema** | The schema editor at full width. |
 
-### View Issue Interface
+Both editors follow the console's light or dark appearance.
 
-The Issue Indicator shows details about syntax errors in your JSON data. Clicking it opens a panel with a list of issues, including line numbers and descriptions. This helps you quickly find and fix errors to ensure your JSON is valid.
+## Data pane
 
-<img src="/images/json-editor/2.png" alt="View Issue Interface" className="rounded-lg"/>
+The **Data** pane on the left holds the silo's JSON.
+
+1. **Editor mode:** Switch between three modes.
+    - **Edit:** Type directly in the editor.
+    - **Upload:** Drop a `.json` file or click `Browse files`. The file replaces the editor's content and is checked against the schema before you save.
+    - **Changes:** A read-only diff of your unsaved edits against the saved data. Available when you have unsaved changes.
+2. **Format:** Re-indents the JSON. If the silo has a saved schema, it also puts the keys in the schema's order.
+3. **Download:** Download the JSON in the editor to your local machine, unsaved edits included.
+4. **Discard:** Throw away your unsaved edits and return to the saved data.
+5. **Save data:** Save changes made to the JSON data. A dot on the button means you have unsaved changes. You can also press `⌘S` on macOS or `Ctrl S` on Windows and Linux.
+6. **Path bar:** Shows where your cursor is in the document, for example `store › products › [0] › price`.
+7. **Outline:** Opens a list of the top-level keys or array items. Click one to jump to it.
+8. **Editor Area:** The main area where you can view and edit your JSON data.
+9. **Status bar:** Shows the cursor position, the size of the data, and whether the document is **Valid JSON**.
+
+<Note>The size in the status bar is measured the same way as your plan's per-silo limit: the JSON with whitespace removed. Indentation in the editor doesn't count towards it.</Note>
+
+### Fixing syntax errors
+
+When the JSON doesn't parse, the status bar shows the number of syntax errors and a notice above the panes names the first one with its line number. Click `Go to line` to jump to it.
+
+### Fixing data that doesn't match the schema
+
+When the silo has a schema and a value doesn't match it, a notice above the panes names the invalid value. It offers two shortcuts:
+
+- `Go to data line`: Jumps to the value in the data editor.
+- `Show the rule`: Opens the schema editor at the rule the value breaks.
+
+What happens next depends on the lock:
+
+- **Schema locked:** You can't save until the data matches. The `Save data` button is disabled.
+- **Schema unlocked:** The notice is a warning only, and the data still saves.
+
+## Schema pane
+
+The **Schema** pane on the right holds the silo's JSON Schema. Use it to enable, edit, lock, and remove the schema.
+
+See [Schema Lock](/features/schema-lock) for a full guide.
+
+## Unsaved changes
+
+If you try to leave the tab with unsaved changes to the data or the schema, the console asks **Leave without saving?** and lists what would be lost. Click `Stay` to go back, or `Leave without saving` to discard the changes.

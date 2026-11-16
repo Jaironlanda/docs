@@ -1,0 +1,249 @@
+---
+title: 'Update a silo from code and CI'
+sidebarTitle: 'Update from code & CI'
+description: 'Create and update silos with the Manage API, and keep a silo in sync with a file in your repo.'
+icon: arrows-rotate
+---
+
+The [Manage API](/api-reference/introduction) lets your own scripts create, read, update, and delete silos. This page shows three common jobs: creating a silo, changing one value, and syncing a JSON file from GitHub on every push.
+
+**You will use:** the Manage API and a [Manage Key](/keys/manage-keys).
+
+<Note>A silo works best with **one writer** (you, a script, or a CI job) and many readers. The Manage API isn't built for many users writing to the same silo at the same time. See [Update Silo](/api-reference/endpoint/patch-silo).</Note>
+
+## Setup
+
+```bash .env
+JSONSILO_BASE=https://[region-code].jsonsilo.com/api/v1/manage
+JSONSILO_MANAGE_KEY=<YOUR_MANAGE_KEY_HERE>
+```
+
+Use the region code of the silo you are working with. To create a silo, use the region you want it in.
+
+## Create a silo
+
+`file_data` and `region_name` are required. The response contains the new silo's `file_uuid`.
+
+<CodeGroup>
+
+```bash Terminal
+curl -X POST "https://api.jsonsilo.com/api/v1/manage" \
+  -H "X-MAN-API: <YOUR_MANAGE_KEY_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "file_name": "inventory",
+    "region_name": "api",
+    "is_public": false,
+    "file_data": { "products": [{ "sku": "MUG-01", "stock": 40 }] }
+  }'
+```
+
+```javascript create.js
+const res = await fetch(process.env.JSONSILO_BASE, {
+  method: 'POST',
+  headers: {
+    'X-MAN-API': process.env.JSONSILO_MANAGE_KEY,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    file_name: 'inventory',
+    region_name: 'api',
+    is_public: false,
+    file_data: { products: [{ sku: 'MUG-01', stock: 40 }] },
+  }),
+});
+
+const silo = await res.json();
+console.log('Created', silo.file_uuid);
+```
+
+```python create.py
+import os
+
+import requests
+
+res = requests.post(
+    os.environ["JSONSILO_BASE"],
+    headers={"X-MAN-API": os.environ["JSONSILO_MANAGE_KEY"]},
+    json={
+        "file_name": "inventory",
+        "region_name": "api",
+        "is_public": False,
+        "file_data": {"products": [{"sku": "MUG-01", "stock": 40}]},
+    },
+    timeout=10,
+)
+res.raise_for_status()
+print("Created", res.json()["file_uuid"])
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "file_uuid": "f1b9b1b4-0b1b-4b1b-8b1b-2b1b1b1b1b1b",
+  "is_public": false,
+  "file_name": "inventory",
+  "region_name": "api"
+}
+```
+
+<Warning>Send the request to `/api/v1/manage` with no trailing slash.</Warning>
+
+## Change one value
+
+`file_data` in an update **replaces the whole document**. To change one value, read the silo, change it in your code, and send all of it back.
+
+This script sets the stock of one product:
+
+<CodeGroup>
+
+```javascript set-stock.js
+const BASE = process.env.JSONSILO_BASE;
+const headers = {
+  'X-MAN-API': process.env.JSONSILO_MANAGE_KEY,
+  'Content-Type': 'application/json',
+};
+
+async function setStock(fileUuid, sku, stock) {
+  // 1. Read the current data
+  const current = await fetch(`${BASE}/${fileUuid}`, { headers });
+  if (!current.ok) throw new Error(`Read failed: ${current.status}`);
+  const data = await current.json();
+
+  // 2. Change it
+  const product = data.products.find((p) => p.sku === sku);
+  if (!product) throw new Error(`No product ${sku}`);
+  product.stock = stock;
+
+  // 3. Send the whole document back
+  const res = await fetch(`${BASE}/${fileUuid}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ file_data: data }),
+  });
+
+  if (res.status === 422) {
+    const { errors } = await res.json();
+    throw new Error(`Rejected by schema at ${errors[0].path}: ${errors[0].message}`);
+  }
+  if (!res.ok) throw new Error(`Update failed: ${res.status} ${await res.text()}`);
+}
+
+await setStock('[file-uuid]', 'MUG-01', 35);
+```
+
+```python set_stock.py
+import os
+
+import requests
+
+BASE = os.environ["JSONSILO_BASE"]
+HEADERS = {"X-MAN-API": os.environ["JSONSILO_MANAGE_KEY"]}
+
+
+def set_stock(file_uuid: str, sku: str, stock: int) -> None:
+    # 1. Read the current data
+    current = requests.get(f"{BASE}/{file_uuid}", headers=HEADERS, timeout=10)
+    current.raise_for_status()
+    data = current.json()
+
+    # 2. Change it
+    product = next((p for p in data["products"] if p["sku"] == sku), None)
+    if product is None:
+        raise ValueError(f"No product {sku}")
+    product["stock"] = stock
+
+    # 3. Send the whole document back
+    res = requests.patch(
+        f"{BASE}/{file_uuid}", headers=HEADERS, json={"file_data": data}, timeout=10
+    )
+    if res.status_code == 422:
+        error = res.json()["errors"][0]
+        raise ValueError(f"Rejected by schema at {error['path']}: {error['message']}")
+    res.raise_for_status()
+
+
+set_stock("[file-uuid]", "MUG-01", 35)
+```
+
+</CodeGroup>
+
+### When the schema says no
+
+If the silo has a [locked schema](/features/schema-lock), an update that doesn't match it returns `422` and nothing is saved. For example, sending `"stock": "35"` (a string) to a silo whose schema expects a number returns:
+
+```json 422 Response
+{
+  "message": "Silo data does not match its locked schema.",
+  "errors": [
+    {
+      "path": "/products/0/stock",
+      "message": "Instance type \"string\" is invalid. Expected \"integer\"."
+    }
+  ]
+}
+```
+
+`path` is a JSON Pointer to the first invalid value. Fix it and send the request again.
+
+## Sync a file from GitHub Actions
+
+Keep the JSON in your repository, review changes in pull requests, and push it to the silo when it lands on `main`.
+
+<Steps>
+  <Step title="Add the file to your repo">
+    For example, `config/flags.json`.
+  </Step>
+  <Step title="Add a secret and a variable">
+    In your repository, open **Settings → Secrets and variables → Actions** and add:
+
+    - A **secret** named `JSONSILO_MANAGE_KEY` with your Manage Key.
+    - A **variable** named `JSONSILO_SILO_UUID` with the silo's UUID.
+  </Step>
+  <Step title="Add the workflow">
+    ```yaml .github/workflows/sync-jsonsilo.yml
+    name: Sync flags to JSONsilo
+
+    on:
+      push:
+        branches: [main]
+        paths: [config/flags.json]
+      workflow_dispatch:
+
+    jobs:
+      sync:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+
+          - name: Validate JSON
+            run: jq empty config/flags.json
+
+          - name: Upload to JSONsilo
+            env:
+              MANAGE_KEY: ${{ secrets.JSONSILO_MANAGE_KEY }}
+              SILO_UUID: ${{ vars.JSONSILO_SILO_UUID }}
+            run: |
+              jq '{file_data: .}' config/flags.json > body.json
+              curl --fail-with-body -sS -X PATCH \
+                "https://api.jsonsilo.com/api/v1/manage/$SILO_UUID" \
+                -H "X-MAN-API: $MANAGE_KEY" \
+                -H "Content-Type: application/json" \
+                --data @body.json \
+                -o /dev/null -w "JSONsilo responded %{http_code}\n"
+    ```
+
+    Change `api` in the URL if your silo is in another region.
+  </Step>
+</Steps>
+
+The job fails if JSONsilo rejects the update, for example with `422` when the file doesn't match the silo's locked schema. That makes Schema Lock a useful safety net for this workflow: a broken file never reaches the apps reading the silo.
+
+<Warning>Manage Keys expire after the duration you chose when you created them. When a key expires, the job fails with `401`. Create a new key and update the secret.</Warning>
+
+## Good to know
+
+- **Changes are logged.** Every create, update, and delete through the Manage API appears in [Logs](/features/activity-logs) with an **(API)** label.
+- **Watch the headers.** Responses include `ManageSilo-Req-Remaining`, so a script can slow down before it hits the [rate limit](/rate-limits).
+- **Changing `region_name` or `is_public` changes the silo's URL.** Only send them when you mean to.

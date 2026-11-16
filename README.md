@@ -1,41 +1,50 @@
-# Mintlify Starter Kit
+# JSONsilo Docs
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+Source for [docs.jsonsilo.com](https://docs.jsonsilo.com), built with [Mintlify](https://mintlify.com).
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+## Development
 
-### Development
+Install the [Mintlify CLI](https://www.npmjs.com/package/mint) (Node.js 18 or later):
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
-
-```
-npm i -g mintlify
+```bash
+npm i -g mint
 ```
 
-Run the following command at the root of your documentation (where mint.json is)
+Run the preview at the root of the repo (where `docs.json` is):
 
+```bash
+mint dev
 ```
-mintlify dev
+
+The site is served at `http://localhost:3000`. Use `mint dev --port 3333` to pick another port.
+
+Before pushing, check the build and links:
+
+```bash
+mint validate
+mint broken-links --check-anchors --check-redirects
 ```
 
-### Publishing Changes
+Keep the CLI current with `mint update`.
 
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+## Structure
 
-#### Troubleshooting
+| Path | Contents |
+|---|---|
+| `docs.json` | Site config and navigation |
+| `api-reference/openapi.json` | OpenAPI spec for the Manage API |
+| `features/`, `how-to/`, `keys/`, `mcp/`, ... | Pages, one `.mdx` file per page |
+| `snippets/` | Reusable MDX snippets (never rendered as pages) |
+| `images/` | Screenshots and diagrams |
+| `.mintignore` | Files excluded from the build |
 
-- Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
-- Page loads as a 404 - Make sure you are running in a folder with `mint.json`
+A page only appears in the sidebar once it is listed in `docs.json`'s `navigation`. When you move or rename a page, add a `redirects` entry from the old path.
 
-<Note>The free plan is limited to one silo only.</Note>
-<Note>For first-timers, you will be redirected to the onboarding page automatically.</Note>
+## Publishing Changes
 
-<img className="rounded" height="200" noZoom src="/images/view-silo/silo-setting.png" />
+The Mintlify GitHub app deploys changes automatically after a push to `main`.
 
-<img className="rounded" height="200" noZoom src="/images/view-silo/silo-setting-1.png" />
+## Troubleshooting
 
-<img className="rounded" height="200" noZoom src="/images/view-silo/silo-setting-2.png" />
+- `mint dev` isn't running: run `mint update` and try again.
+- A page loads as a 404: make sure it is listed in `docs.json` and you are running in the folder that has `docs.json`.

@@ -1,0 +1,62 @@
+---
+title: 'Analytics'
+description: 'See how many requests your silos serve'
+---
+
+## Introduction
+
+Analytics shows how many requests your silos serve, how that changes over time, and how many requests are rejected. Use it to spot your busiest silos and to notice when clients start failing.
+
+> **Analytics is included in the free trial and on the Basic and Pro plans.** See [Pricing Plans](/pricing-plans).
+
+## Open Analytics
+
+Click **Analytics** in the sidebar, under **Observe**.
+
+<Frame><img src="/images/analytics/overview.png" alt="Analytics screen" /></Frame>
+
+The screen has three parts:
+
+1. **Totals**: **Total requests**, **Failed**, **Failure rate**, and your **Busiest silo** for the selected range.
+2. **Requests**: A chart of requests across all your silos, with failed requests marked.
+3. **By silo**: A table of your silos, busiest first, with each one's share of traffic, requests, and failed requests.
+
+## Choose a Range
+
+Use the **Range** switch at the top right to change the period.
+
+| Range | Chart detail |
+|---|---|
+| **24h** | 15-minute buckets |
+| **7d** | By hour |
+| **30d** | By day |
+
+How far back you can look depends on your plan. A range your plan doesn't include shows a lock.
+
+| Plan | History |
+|---|---|
+| Free trial | 2 days |
+| Basic | 7 days |
+| Pro | 30 days |
+
+## Analytics for One Silo
+
+Each silo has its own chart. Open a silo and look at the **Requests** card on the **Overview** tab. Click `View all analytics` to go back to the full screen.
+
+The **Silos** list also shows each silo's requests for the last 24 hours, so you can sort the list by **Requests**.
+
+## What Is Counted
+
+A request is counted when it reaches one of your silos:
+
+- Reads of a private or public silo URL, including [Query](/features/query-silo-data) and [Search](/features/search-silo-data).
+- [Manage API](/api-reference/introduction) requests.
+- [MCP](/mcp/overview) tool calls and resource reads.
+
+**Failed** requests are the ones that were rejected, for example because of a missing or invalid key, or a [rate limit](/rate-limits).
+
+> **Notes:**
+> - Counts are sampled at very high volumes, so busy silos show a close estimate.
+> - Data covers the last three months.
+> - Analytics started counting when the feature launched, so there is no history from before then.
+> - Requests are counted on every plan. If you upgrade, your existing history is already there.

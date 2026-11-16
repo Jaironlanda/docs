@@ -1,0 +1,127 @@
+---
+title: 'Connect a Client'
+description: 'Add the JSONsilo MCP server to Claude Code, Cursor, VS Code, or another client'
+---
+
+## Introduction
+
+This guide shows how to add the JSONsilo MCP server to your AI tool. You need an [MCP Key](/keys/mcp-keys) first.
+
+<Tip>The console builds these snippets for you. Right after you create a key, the **MCP key created** dialog shows them with your real key filled in. Later, click `Connect a client` on the **MCP keys** tab to see them again with a placeholder.</Tip>
+
+## Connection Details
+
+| | |
+|---|---|
+| **Server URL** | `https://mcp.jsonsilo.com/mcp` |
+| **Header** | `Authorization: Bearer jsmcp_YOUR_KEY` |
+
+In every example below, replace `jsmcp_YOUR_KEY` with one of your MCP keys.
+
+## Setup
+
+<Tabs>
+  <Tab title="Claude Code">
+    Run this in your terminal:
+
+    ```bash Terminal
+    claude mcp add --transport http jsonsilo https://mcp.jsonsilo.com/mcp --header "Authorization: Bearer jsmcp_YOUR_KEY"
+    ```
+
+    Add `--scope user` to make the server available in every project.
+  </Tab>
+  <Tab title="Cursor">
+    Add this to `~/.cursor/mcp.json`, or merge it into the `mcpServers` you already have:
+
+    ```json ~/.cursor/mcp.json
+    {
+      "mcpServers": {
+        "jsonsilo": {
+          "url": "https://mcp.jsonsilo.com/mcp",
+          "headers": {
+            "Authorization": "Bearer jsmcp_YOUR_KEY"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Run **MCP: Open User Configuration** from the Command Palette and add this server:
+
+    ```json mcp.json
+    {
+      "servers": {
+        "jsonsilo": {
+          "type": "http",
+          "url": "https://mcp.jsonsilo.com/mcp",
+          "headers": {
+            "Authorization": "Bearer jsmcp_YOUR_KEY"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Other">
+    Any MCP client that supports Streamable HTTP and custom headers can connect with these two values:
+
+    - **Server URL**: `https://mcp.jsonsilo.com/mcp`
+    - **Header**: `Authorization: Bearer jsmcp_YOUR_KEY`
+
+    Check your client's documentation for where to enter them.
+  </Tab>
+</Tabs>
+
+<Warning>These snippets contain your key. Keep them out of files you commit.</Warning>
+
+## Check the Connection
+
+Ask your assistant:
+
+```text
+List my JSONsilo silos.
+```
+
+The assistant should call the `list_silos` tool and show your silos. If it does, you are connected.
+
+You can also check from the terminal. This asks the server for its list of tools:
+
+```bash Terminal
+curl -X POST https://mcp.jsonsilo.com/mcp \
+  -H "Authorization: Bearer jsmcp_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "MCP-Protocol-Version: 2025-11-25" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+A working key returns `200` with the tool list. A key that doesn't work returns one of the errors below.
+
+## Troubleshooting
+
+When a request is refused, the server answers with a status code and a JSON body such as `{ "error": "Invalid MCP key" }`.
+
+| Status | Message | What to do |
+|---|---|---|
+| `401` | `Missing MCP key. Send Authorization: Bearer <your MCP key>.` | Your client isn't sending the header. Check the header name and the `Bearer ` prefix. |
+| `401` | `Invalid MCP key` | The key is wrong, was deleted, or isn't an MCP key. Access Keys and Manage Keys don't work here. |
+| `401` | `MCP key expired. Create a new key in the JsonSilo console.` | Create a new [MCP Key](/keys/mcp-keys) and update your client. |
+| `403` | `MCP is not available on your plan. Please upgrade your plan.` | Your plan doesn't include MCP. [Change your plan](/billing/upgrade-plan). Your keys work again once you do. |
+| `402` | `Trial ended` | Your free trial is over. [Choose a plan](/billing/upgrade-plan). |
+| `429` | `Request limit exceeded` or `Daily limit exceeded` | You hit a [rate limit](/rate-limits). Wait and try again. |
+
+<AccordionGroup>
+  <Accordion title="The assistant can read silos but can't change them">
+    The key is **Read only**. Write tools are hidden from the assistant with this kind of key. Create a new key with **Read & write** access.
+  </Accordion>
+  <Accordion title="A write fails with a schema error">
+    The silo has a locked schema and the new data doesn't match it. The error names the invalid value. Ask the assistant to fix the data, or change the schema in the console. See [Schema Lock](/features/schema-lock).
+  </Accordion>
+  <Accordion title="The assistant only gets a summary of my silo">
+    The silo is over 100 KB, so it is not returned whole. Ask the assistant for the specific part you need. See [MCP Tools](/mcp/tools#large-silos).
+  </Accordion>
+  <Accordion title="My browser-based tool can't connect">
+    The MCP server is built for desktop and command-line clients. It doesn't accept requests from web pages.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,61 @@
+---
+title: 'Examples'
+sidebarTitle: 'Overview'
+description: 'Copy-paste recipes for common JSONsilo use cases, from remote config to AI-assisted edits.'
+icon: flask
+---
+
+Each example is a small, complete use case: the JSON to put in a silo, the code that reads or writes it, and the things to watch out for. Pick the one closest to what you are building and adapt it.
+
+## Reading data
+
+<Columns cols={2}>
+  <Card title="Remote config and feature flags" icon="toggle-on" href="/examples/remote-config">
+    Serve flags from a public silo and read them straight from the browser.
+  </Card>
+  <Card title="Private silo from your backend" icon="server" href="/examples/private-backend">
+    Keep your Access Key on the server and expose only what your front end needs.
+  </Card>
+  <Card title="Product catalog with Query and Search" icon="magnifying-glass" href="/examples/product-catalog">
+    Filter, pick, and convert fields of a private silo with URL parameters.
+  </Card>
+</Columns>
+
+## Writing data
+
+<Columns cols={2}>
+  <Card title="Update a silo from code and CI" icon="arrows-rotate" href="/examples/sync-from-code">
+    Create and update silos with the Manage API, and sync a file from GitHub Actions.
+  </Card>
+  <Card title="Edit silos with an AI assistant" icon="robot" href="/examples/mcp-workflows">
+    Prompts that put the MCP server to work in Claude Code, Cursor, or VS Code.
+  </Card>
+</Columns>
+
+## Before you begin
+
+Most examples need:
+
+- A JSONsilo account. [Sign up](https://console.jsonsilo.com/signup) to start a free trial.
+- A silo. See [Create Silo](/how-to/create-silo).
+- The right key for the job:
+
+| Example | Key |
+|---|---|
+| Reading a public silo | None |
+| Reading a private silo, Query, Search | [Access Key](/keys/access-keys) in `X-SILO-KEY` |
+| Creating, updating, deleting silos | [Manage Key](/keys/manage-keys) in `X-MAN-API` |
+| AI assistants | [MCP Key](/keys/mcp-keys) in `Authorization: Bearer` |
+
+## Placeholders
+
+The code uses these placeholders. Replace them with your own values.
+
+| Placeholder | Where to find it |
+|---|---|
+| `[region-code]` | The silo's region, such as `api`, `sg-01-api`, or `usc-01-api`. See [Regions](/regions). |
+| `[file-uuid]` | The **Silo UUID** on the silo's **Overview** tab. |
+| `<YOUR_X_SILO_KEY_HERE>` | An Access Key you created under **Keys**. |
+| `<YOUR_MANAGE_KEY_HERE>` | A Manage Key you created under **Keys**. |
+
+<Tip>Rather than building a URL by hand, copy it from the **Silo URL** or **Public URL** card on the silo's **Overview** tab.</Tip>

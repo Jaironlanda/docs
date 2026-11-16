@@ -1,0 +1,85 @@
+---
+title: 'MCP Server'
+sidebarTitle: 'Overview'
+description: 'Let AI tools read and edit your silos over the Model Context Protocol'
+---
+
+## Introduction
+
+JSONsilo runs a remote [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server. MCP is an open standard that lets AI tools call external services. Once you connect an AI tool such as Claude Code, Cursor, or VS Code, the assistant can work with your silos directly from a conversation.
+
+With MCP connected, you can ask your assistant things like:
+
+- "List my silos and tell me which one is the largest."
+- "What is the price of the second product in my `products` silo?"
+- "Add a `discount` field set to `0` to every item in the `pricing` silo."
+- "Create a private silo called `feature-flags` with this JSON."
+
+> **MCP is included in the free trial and on the Basic and Pro plans.** See [Pricing Plans](/pricing-plans).
+
+## How It Works
+
+| | |
+|---|---|
+| **Server URL** | `https://mcp.jsonsilo.com/mcp` |
+| **Transport** | Streamable HTTP |
+| **Authentication** | `Authorization: Bearer <your MCP key>` |
+
+You create an [MCP Key](/keys/mcp-keys) in the console and give it to your AI tool. The tool sends the key with every request, and the server limits it to **your** silos. An assistant can never see or change another account's data.
+
+## What an Assistant Can Do
+
+What the assistant can do depends on the access you give the key.
+
+| Key access | The assistant can |
+|---|---|
+| **Read only** | List silos, read their metadata and data, query them, and read their schema. |
+| **Read & write** | Everything above, plus create, update, patch, and delete silos. |
+
+With a **Read only** key, the write tools are hidden from the assistant completely. See [MCP Tools](/mcp/tools) for the full list.
+
+## Get Started
+
+<Steps>
+  <Step title="Create an MCP key">
+    In the console, open **Keys**, select **MCP keys**, and click `New key`. Choose the access and how long the key stays valid.
+
+    See [MCP Keys](/keys/mcp-keys).
+  </Step>
+  <Step title="Connect your AI tool">
+    Add the JSONsilo server to your tool. The console gives you a ready-made snippet with your key in it.
+
+    See [Connect a Client](/mcp/connect-clients).
+  </Step>
+  <Step title="Ask your assistant">
+    Start with something simple, such as "List my JSONsilo silos". The assistant calls the `list_silos` tool and shows you the result.
+  </Step>
+</Steps>
+
+## Supported Clients
+
+Any MCP client that supports **Streamable HTTP** and **custom headers** can connect. The console has setup snippets for:
+
+- Claude Code
+- Cursor
+- VS Code
+
+<Note>Clients that need to sign in with OAuth, such as the claude.ai and ChatGPT web apps, are not supported yet.</Note>
+
+## Staying Safe
+
+An AI tool with a **Read & write** key can change and delete your data. A few things keep that under control:
+
+- **Use Read only keys** when the assistant only needs to look things up.
+- **Lock a schema** on silos that your apps depend on. A write from an assistant that doesn't match a locked schema is rejected, just like any other write. See [Schema Lock](/features/schema-lock).
+- **Check the logs.** Every change made over MCP is recorded in [Logs](/features/activity-logs) with an **(MCP)** label.
+- **Delete a key** as soon as you stop using it. It stops working immediately.
+- **Give each tool its own key**, so you can remove one without affecting the others.
+
+## Limits
+
+- **Rate limits**: MCP has its own rate limit, set by your plan and counted separately from your other traffic. See [Rate Limits](/rate-limits).
+- **Free trial**: Tool calls and resource reads count towards the trial's 1,000 requests. Connecting and listing tools do not.
+- **Analytics**: Tool calls and resource reads appear in [Analytics](/features/analytics) for the silo they touch.
+- **Large silos**: Reading a silo over 100 KB returns a summary instead of the full data. See [MCP Tools](/mcp/tools#large-silos).
+- **Request size**: A single request can be up to 25 MB.

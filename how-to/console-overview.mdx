@@ -1,0 +1,65 @@
+---
+title: 'Console Overview'
+description: 'Find your way around the JSONsilo console.'
+---
+
+## Introduction
+
+The [JSONsilo console](https://console.jsonsilo.com) is where you create silos, edit their data, manage keys, and watch how your silos are used. This page is a tour of the layout so you know where everything lives.
+
+<Frame><img src="/images/console/overview.png" alt="Console with the sidebar and the Silos screen" /></Frame>
+
+## Sidebar
+
+The sidebar groups the screens by what you do with them.
+
+| Group | Screen | What it's for |
+|---|---|---|
+| | **Get started** | A three-step checklist for new accounts: create a key, create a silo, make a request. |
+| Build | **Silos** | Your JSON documents. Create, search, filter, and open silos. |
+| Build | **Keys** | Access Keys, Manage Keys, and MCP Keys. |
+| Observe | **Analytics** | How many requests your silos serve, and how many are rejected. |
+| Observe | **Logs** | Today's activity on your account. |
+| Account | **Billing** | Your plan, what you're using, and past invoices. |
+| Account | **Account** | Your email, password, sessions, and appearance. |
+
+Other parts of the sidebar:
+
+- **Plan badge**: Next to the JSONsilo logo. It shows your current plan and opens **Billing**.
+- **Usage card**: Above your email. On a paid plan it shows how many silos you have used out of your limit. On the free trial it shows **Trial requests left** and **Trial time left**.
+- **Account menu**: Click your email at the bottom to open **My account** and **Manage plan**, switch between **Light** and **Dark** appearance, open the homepage or these docs, or **Log out**.
+
+You can collapse the sidebar to icons with the toggle at the left of the top bar. The content then fills the window.
+
+## Top bar
+
+The top bar stays in place on every screen.
+
+- **Breadcrumbs**: Show where you are, for example `Silos / My silo / Settings`. Click a crumb to go back up.
+- **Jump to a silo or page**: Opens a search box. Type a silo name, a UUID, or a page name and press `Enter` to go there. Open it from anywhere with `⌘K` on macOS or `Ctrl K` on Windows and Linux.
+- **Docs**: Opens this documentation.
+- **Need help?**: Opens the support section of the FAQ.
+
+## Silo screens
+
+Click a silo in the **Silos** list to open it. Every silo has the same header and three tabs.
+
+The header shows the silo's name, whether it is **Public** or **Private**, a **Schema locked** badge when its schema is locked, its region, its size, and when it was last updated. The `Download` and `Edit content` buttons sit on the right.
+
+| Tab | What it's for |
+|---|---|
+| **Overview** | The silo's URL, request chart, code examples, details, schema lock status, and a preview of the data. |
+| **Data & schema** | Edit the JSON and its schema side by side. See [Data & Schema Editor](/editor/json-editor). |
+| **Settings** | Rename the silo, change its access or region, or delete it. |
+
+See [Manage Silo](/how-to/manage-silo) for a full walkthrough.
+
+## Appearance
+
+The console supports light and dark themes. Open **Account** and use **Appearance** to choose **Light**, **Dark**, or **System**. The setting applies to the browser you are using.
+
+## What's next?
+
+- [Create your first silo](/how-to/create-silo).
+- [Create an Access Key](/keys/access-keys) to read private silos.
+- [Lock a schema](/features/schema-lock) to keep your data in shape.

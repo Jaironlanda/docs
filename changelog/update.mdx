@@ -3,6 +3,41 @@ title: 'Update'
 description: 'Latest feature updates on JSONsilo.com:'
 ---
 
+{/* TODO: put the release version in `description` (e.g. "v4.0.0") and set `label` to the release date. */}
+<Update label="14-11-2026" description="Console redesign, Schema Lock & MCP" rss={{ title: "Console redesign, Schema Lock & MCP", description: "A redesigned console, Schema Lock, an MCP server for AI tools, request analytics, and a 2-day free trial." }}>
+
+### New console
+
+The console has been redesigned from the ground up. See the [Console Overview](/how-to/console-overview).
+
+- **[New]** Sidebar grouped into **Build**, **Observe**, and **Account**, with a usage card for your plan.
+- **[New]** **Get started** checklist that takes new accounts from a key to a first request.
+- **[New]** Jump to any silo or page with `⌘K` / `Ctrl K`.
+- **[New]** Silo pages split into **Overview**, **Data & schema**, and **Settings** tabs.
+- **[New]** Silo list with search, access and region filters, sorting, and per-silo request counts.
+- **[New]** [Data & Schema Editor](/editor/json-editor): edit JSON and its schema side by side, with an outline, a cursor path bar, and a diff of unsaved changes.
+- **[New]** Light, dark, and system appearance.
+
+### Schema Lock
+
+- **[New]** Attach a JSON Schema to a silo and lock it. Writes from the console, the Manage API, and MCP that don't match are rejected. See [Schema Lock](/features/schema-lock).
+- **[New]** Generate a strict or loose schema from your existing data in one click.
+- **[New]** [Get Silo Meta](/api-reference/endpoint/get-meta) now returns `has_schema`, `schema_locked`, and `file_size_bytes`.
+
+### MCP server
+
+- **[New]** Connect AI tools such as Claude Code, Cursor, and VS Code to your silos. See [MCP Server](/mcp/overview).
+- **[New]** [MCP Keys](/keys/mcp-keys) with **Read only** or **Read & write** access.
+
+### More
+
+- **[New]** [Analytics](/features/analytics): request and failure counts across all silos and for each silo.
+- **[New]** [Logs](/features/activity-logs) now show whether a change came from the console, the Manage API, or MCP.
+- **[New]** [Search](/features/search-silo-data#example-3-multiple-conditions) supports multiple conditions.
+- **[New]** New accounts start on a [2-day free trial](/pricing-plans#free-trial) with every feature included. The Free plan is no longer offered to new accounts; existing Free accounts are unchanged.
+
+</Update>
+
 <Update label="7-11-2025" description="v3.0.0">
 
 ### Update & Fix

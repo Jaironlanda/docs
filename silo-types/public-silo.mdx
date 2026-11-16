@@ -13,6 +13,7 @@ A Public Silo in JSONsilo is a storage solution for your JSON files that allows 
 
 - **Easy Sharing**: Share your JSON files with anyone by simply providing the link.
 - **No Authentication Required**: Public silos do not require users to authenticate or provide access keys.
+- **Works in the Browser**: A public silo URL can be fetched directly from front-end code on any website.
 
 ## Unsupported Features
 
@@ -25,21 +26,46 @@ A Public Silo in JSONsilo is a storage solution for your JSON files that allows 
 - **Collaboration**: Facilitate collaboration by allowing team members to access shared JSON files without barriers.
 - **Documentation**: Host JSON files for documentation purposes that need to be easily accessible to users.
 
+## URL Format
+
+```bash
+https://[region-code].jsonsilo.com/public/[file-uuid]
+```
+
+<Warning>Please ensure that `/public/` is included; otherwise, the request is treated as a private silo read and asks for an Access Key.</Warning>
+
+You can copy the full URL from the **Public URL** card on the silo's **Overview** tab in the console.
+
 ## How to Create a Public Silo
 
 To create a public silo, follow these steps:
 
-1. Navigate to the Silos dashboard in JSONsilo console.
-2. Click on the "Create new Silo" button.
-3. Select the "Public" option in the access field.
-4. Click "Next: Add JSON Data" button to proceed.
-5. Upload or create your JSON file using the JSON Editor.
-6. Save the silo to generate a unique URL.
+1. Click **Silos** in the sidebar of the JSONsilo console.
+2. Click on the `Create silo` button.
+3. Enter a name and pick a region.
+4. Turn the access switch to **Public**.
+5. Paste or upload your starting JSON.
+6. Click `Create silo` to generate a unique URL.
+
+For a full walkthrough, see [Create Silo](/how-to/create-silo).
+
+To make an existing private silo public, open its **Settings** tab and choose **Public** under **Access**. The silo's URL changes when you do.
 
 ## Accessing a Public Silo
 
 <ExamplePublicSilo />
 
+### Supported HTTP Method
+
+A silo URL supports **GET** only. To create, update, or delete silos from your code, use the [Manage API](/api-reference/introduction).
+
+### Errors
+
+| Status | Meaning |
+|---|---|
+| `404` | The silo doesn't exist, or it is not public. |
+| `429` | You hit a [rate limit](/rate-limits). |
+
 ## Rate Limits
 
-Public silos have the same rate limits as private silos depending on your subscription plan.
+Public silos have the same rate limits as private silos depending on your [subscription plan](/pricing-plans). The limit is counted for each silo, and it uses the plan of the silo's owner. See [Rate Limits](/rate-limits).

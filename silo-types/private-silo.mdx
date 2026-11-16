@@ -19,26 +19,51 @@ A Private Silo in JSONsilo is a secure storage solution for your JSON files that
 - **Internal Applications**: Use private silos to manage JSON data for internal applications that require restricted access.
 - **Development and Testing**: Create private silos for development and testing purposes, ensuring that test data remains secure.
 
+## URL Format
+
+```bash
+https://[region-code].jsonsilo.com/[file-uuid]
+```
+
+You can copy the full URL from the **Silo URL** card on the silo's **Overview** tab in the console.
+
 ## How to Create a Private Silo
 
 To create a private silo, follow these steps:
 
-1. Navigate to the Silos dashboard in JSONsilo console.
-2. Click on the "Create new Silo" button.
-3. Select the "Private" option in the access field.
-4. Click "Next: Add JSON Data" button to proceed.
-5. Upload or create your JSON file using the JSON Editor.
-6. Save the silo to generate a unique URL.
+1. Click **Silos** in the sidebar of the JSONsilo console.
+2. Click on the `Create silo` button.
+3. Enter a name and pick a region.
+4. Leave the access switch on **Private**. This is the default.
+5. Paste or upload your starting JSON.
+6. Click `Create silo` to generate a unique URL.
+
+For a full walkthrough, see [Create Silo](/how-to/create-silo).
+
+To make an existing public silo private, open its **Settings** tab and choose **Private** under **Access**. The silo's URL changes when you do.
 
 ## Accessing a Private Silo
 
 <ExamplePrivateSilo />
 
+### Supported HTTP Method
+
+A silo URL supports **GET** only. To create, update, or delete silos from your code, use the [Manage API](/api-reference/introduction).
+
+### Errors
+
+| Status | Meaning |
+|---|---|
+| `403` | The `X-SILO-KEY` header is missing. |
+| `401` | The Access Key is invalid or was deleted. |
+| `404` | The silo doesn't exist, or it belongs to another account. |
+| `429` | You hit a [rate limit](/rate-limits). |
 
 ## Rate Limits
 
-Private silos have the same rate limits as public silos depending on your [subscription plan](/pricing-plans).
+Private silos have the same rate limits as public silos depending on your [subscription plan](/pricing-plans). See [Rate Limits](/rate-limits).
 
 Here are some links you might find helpful:
 - **Query Silo Data**: [Learn how to query private silos](/features/query-silo-data)
 - **Search Silo Data**: [Learn how to search private silos](/features/search-silo-data)
+- **Schema Lock**: [Learn how to protect a silo's shape](/features/schema-lock)

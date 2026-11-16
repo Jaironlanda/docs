@@ -1,15 +1,18 @@
 ---
 title: 'Update Silo'
+description: "Update a silo's data, name, region, or visibility. file_data replaces the whole document and must match a locked schema."
 openapi: 'PATCH /api/v1/manage/{file_uuid}'
 ---
 
 > ⚠️ **Warning**
 >
 > - This update process does not happen in real-time. It's not suitable for scenarios where **multiple users attempt to update data simultaneously**.
+> - `file_data` replaces the silo's data completely. To change part of it, read the silo, modify the data, and send all of it back.
+> - If the silo has a [locked schema](/features/schema-lock), `file_data` must match it. Otherwise the request returns `422` and nothing is saved.
+> - Changing `region_name` or `is_public` changes the silo's URL.
 >
 
-<img className="rounded" height="200" src="/images/yes-usecase.png" />
+<img className="rounded" height="200" src="/images/yes-usecase.png" alt="Supported use case: one developer or cron job writes to the silo while apps and users only read from it" />
 ---
 
-<img className="rounded" height="200" src="/images/no-usecase.png" />
-
+<img className="rounded" height="200" src="/images/no-usecase.png" alt="Unsupported use case: many users writing to the same silo at the same time" />

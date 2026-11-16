@@ -1,0 +1,168 @@
+---
+title: 'Read a private silo from your backend'
+sidebarTitle: 'Private silo backend'
+description: 'Keep your Access Key on the server and expose only the data your front end needs.'
+icon: server
+---
+
+A private silo needs an Access Key on every request. If you put that key in front-end code, anyone can read it from the browser and use it against all of your private silos. Instead, read the silo from your own server and let your front end call that server.
+
+```text
+Browser  ──▶  Your server (holds X-SILO-KEY)  ──▶  JSONsilo private silo
+```
+
+**You will use:** a [private silo](/silo-types/private-silo) and an [Access Key](/keys/access-keys).
+
+## The data
+
+The examples use a **Private** silo named `team` with this JSON:
+
+```json team.json
+[
+  { "id": 1, "name": "Aiko Tanaka", "role": "Engineering", "status": "active" },
+  { "id": 2, "name": "Sam Rivera", "role": "Design", "status": "active" },
+  { "id": 3, "name": "Noor Haddad", "role": "Support", "status": "on-leave" }
+]
+```
+
+## 1. Store the key and URL as environment variables
+
+```bash .env
+JSONSILO_URL=https://[region-code].jsonsilo.com/[file-uuid]
+JSONSILO_ACCESS_KEY=<YOUR_X_SILO_KEY_HERE>
+```
+
+<Warning>Add `.env` to your `.gitignore`. In production, use your host's secret settings instead of a file.</Warning>
+
+## 2. Add a route that reads the silo
+
+Each example exposes `GET /api/team`, which returns the silo's data. It forwards JSONsilo's status code when the request fails, so a `404` or `429` reaches your logs unchanged.
+
+<Tabs>
+  <Tab title="Next.js" icon="react">
+    A [route handler](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) in the App Router. It runs on the server, so the key never reaches the browser.
+
+    ```javascript app/api/team/route.js
+    export async function GET() {
+      const res = await fetch(process.env.JSONSILO_URL, {
+        headers: { 'X-SILO-KEY': process.env.JSONSILO_ACCESS_KEY },
+        next: { revalidate: 60 }, // reuse the result for 60 seconds
+      });
+
+      if (!res.ok) {
+        return Response.json({ error: 'Could not load team' }, { status: res.status });
+      }
+
+      return Response.json(await res.json());
+    }
+    ```
+
+    Or read it directly in a Server Component:
+
+    ```jsx app/team/page.jsx
+    export default async function TeamPage() {
+      const res = await fetch(process.env.JSONSILO_URL, {
+        headers: { 'X-SILO-KEY': process.env.JSONSILO_ACCESS_KEY },
+        next: { revalidate: 60 },
+      });
+      const team = await res.json();
+
+      return (
+        <ul>
+          {team.map((person) => (
+            <li key={person.id}>{person.name}</li>
+          ))}
+        </ul>
+      );
+    }
+    ```
+  </Tab>
+  <Tab title="Express" icon="node-js">
+    Node.js 18 or later has `fetch` built in.
+
+    ```javascript server.js
+    import express from 'express';
+
+    const app = express();
+
+    app.get('/api/team', async (req, res) => {
+      try {
+        const upstream = await fetch(process.env.JSONSILO_URL, {
+          headers: { 'X-SILO-KEY': process.env.JSONSILO_ACCESS_KEY },
+        });
+
+        if (!upstream.ok) {
+          return res.status(upstream.status).json({ error: 'Could not load team' });
+        }
+
+        res.json(await upstream.json());
+      } catch (err) {
+        res.status(502).json({ error: 'JSONsilo unreachable' });
+      }
+    });
+
+    app.listen(3000, () => console.log('Listening on http://localhost:3000'));
+    ```
+  </Tab>
+  <Tab title="Flask" icon="python">
+    ```python app.py
+    import os
+
+    import requests
+    from flask import Flask, jsonify
+
+    app = Flask(__name__)
+
+    SILO_URL = os.environ["JSONSILO_URL"]
+    ACCESS_KEY = os.environ["JSONSILO_ACCESS_KEY"]
+
+
+    @app.get("/api/team")
+    def team():
+        try:
+            res = requests.get(SILO_URL, headers={"X-SILO-KEY": ACCESS_KEY}, timeout=5)
+        except requests.RequestException:
+            return jsonify(error="JSONsilo unreachable"), 502
+
+        if not res.ok:
+            return jsonify(error="Could not load team"), res.status_code
+
+        return jsonify(res.json())
+    ```
+  </Tab>
+</Tabs>
+
+## 3. Call your route from the front end
+
+```javascript
+const team = await fetch('/api/team').then((res) => res.json());
+```
+
+No key is involved, so this is safe to ship to the browser.
+
+## Return only what the page needs
+
+Your route can pass [Query](/features/query-silo-data) and [Search](/features/search-silo-data) parameters through to the silo, so the browser gets a smaller response. For example, to return only active team members:
+
+```javascript
+const url = new URL(process.env.JSONSILO_URL);
+url.searchParams.set('q', 'status');
+url.searchParams.set('value', 'active');
+
+const res = await fetch(url, {
+  headers: { 'X-SILO-KEY': process.env.JSONSILO_ACCESS_KEY },
+});
+```
+
+<Warning>Don't forward the browser's query string to JSONsilo as-is. Build the parameters yourself, so a visitor can't read fields you didn't mean to expose.</Warning>
+
+See [Product catalog with Query and Search](/examples/product-catalog) for more recipes.
+
+## Errors to handle
+
+| Status | Likely cause |
+|---|---|
+| `403` | The `X-SILO-KEY` header is missing. Check that the environment variable is set. |
+| `401` | The Access Key is wrong or was deleted. |
+| `404` | Wrong UUID or region, or the silo was made public (its URL changed). |
+| `429` | You hit a [rate limit](/rate-limits). Cache results on your server to send fewer requests. |

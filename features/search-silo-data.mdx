@@ -5,7 +5,7 @@ description: 'Dynamically search silo data'
 
 ## Introduction
 
-JSONsilo now supports searching data within silos. This feature allows you to search and interact with silo data programmatically. By adding specific search query parameters to your silo URL, you can search for precise information within your JSON data without needing to download or manually parse the entire dataset.
+JSONsilo supports searching data within silos. This feature allows you to search and interact with silo data programmatically. By adding specific search query parameters to your silo URL, you can search for precise information within your JSON data without needing to download or manually parse the entire dataset.
 
 > **This feature is currently supported only for <u>Private Silos</u>.**
 
@@ -14,23 +14,26 @@ JSONsilo now supports searching data within silos. This feature allows you to se
 While the search feature is powerful, it currently has some limitations:
 
 - Only private silos are supported; public silos are not yet available.
+- Search works on silos whose data is a JSON **array** at the top level.
 - `output` parameter is not supported in search functionality.
+- When you send several conditions, all of them must match. There is no "or".
+- Sorting and pagination are not supported.
 
-Future updates will add support for more complex queries, additional operators, sorting, and pagination.
-
-# Usage
+## Usage
 
 To search data from your private silo, you need to add specific query parameters to your silo URL. These parameters allow you to retrieve data dynamically based on your requirements.
-
-> **Notes:** 
-> - Make sure the parameters are in the correct order when combining them in a request.
-> - All parameters are required for the search to work.
-> - Default operator is `eq` (equal to) if not specified.
-> - Default response format is Array of Objects.
 
 - `q`: The path in the silo data to search.
 - `value`: The value to search for at the specified path.
 - `op`: The search operator to use (see the list of supported operators below).
+
+> **Notes:** 
+> - The order of the parameters in the URL doesn't matter.
+> - `q` and `value` are required for the search to work.
+> - Default operator is `eq` (equal to) if `op` is not specified.
+> - Default response format is Array of Objects.
+
+Send your [Access Key](/keys/access-keys) in the `X-SILO-KEY` header, as with any private silo request.
 
 ### Supported Operators
 
@@ -39,12 +42,16 @@ The following search operators are available:
   | Operator | Description                        |
   |----------|------------------------------------|
   | `eq`     | Equal to                           |
+  | `ne`     | Not equal to                       |
   | `gt`     | Greater than                       |
   | `lt`     | Less than                          |
-  | `ne`     | Not equal to                       |
-  | `lk`     | Like (case-sensitive)              |
-  | `il`     | Insensitive like (case-insensitive)|
+  | `lk`     | Like, a pattern match with `%` as the wildcard |
+  | `il`     | Insensitive like, a pattern match with `%` as the wildcard |
 
+> **Notes:**
+> - `gt` and `lt` compare values as numbers.
+> - `eq` and `ne` compare as numbers when `value` is a number, and as text otherwise.
+> - `lk` and `il` currently behave the same way: both ignore letter case.
 
 ## How It Works
 
@@ -89,6 +96,8 @@ Response:
 
 ### Example 2: Nested Field
 
+Use a dot (`.`) in `q` to reach a field inside a nested object.
+
 Suppose your silo data looks like this:
 
 ```json data.json
@@ -118,13 +127,118 @@ GET https://[region-code].jsonsilo.com/[file-uuid]?q=profile.age&value=30&op=lt
 Response:
 ```json
 [
-  { "id": 1, "profile": { "name": "Alice", "age": 22 } }
+  { "id": 1, "profile": { "name": "Alice", "age": 22 } },
+  { "id": 2, "profile": { "name": "Bob", "age": 28 } }
 ]
 ```
 
-### Example 3: Multiple Operators
+### Example 3: Multiple Conditions
 
-> 🚧 Coming soon
+To search on more than one field, repeat `q`, `value`, and `op` once per condition. An object is returned only when it matches **all** of the conditions.
+
+Suppose your silo data looks like this:
+
+```json data.json
+[
+  { "id": 1, "name": "Alice", "age": 22, "role": "admin" },
+  { "id": 2, "name": "Bob", "age": 28, "role": "user" },
+  { "id": 3, "name": "Charlie", "age": 31, "role": "admin" },
+  { "id": 4, "name": "Dana", "age": 35, "role": "user" }
+]
+```
+
+Find objects where `age` is <u>greater than</u> `25` **and** `role` is <u>equal to</u> `admin`.
+
+```bash
+?q=age&value=25&op=gt&q=role&value=admin&op=eq
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=age&value=25&op=gt&q=role&value=admin&op=eq
+```
+
+Response:
+```json
+{ "id": 3, "name": "Charlie", "age": 31, "role": "admin" }
+```
+
+> **Notes:**
+> - The first `q` goes with the first `value` and the first `op`, the second with the second, and so on.
+> - Send the same number of `q`, `value`, and `op` parameters. Otherwise the API returns `400`.
+> - Only one object matches here, so it is returned on its own. See [Response Format](#response-format).
+
+### Example 4: Pattern Match
+
+The `lk` and `il` operators match a pattern. Use `%` as a wildcard for any number of characters.
+
+Using the data from Example 1, find objects whose `name` <u>starts with</u> `ch`:
+
+```bash
+?q=name&value=ch%25&op=lk
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=name&value=ch%25&op=lk
+```
+
+Response:
+```json
+{ "id": 3, "name": "Charlie", "age": 31 }
+```
+
+| Pattern | Matches |
+|---|---|
+| `ch%` | Values that start with `ch` |
+| `%lie` | Values that end with `lie` |
+| `%arl%` | Values that contain `arl` |
+
+<Warning>In a URL, write `%` as `%25`. For example, send `ch%` as `value=ch%25`.</Warning>
+
+### Example 5: Field Inside a Nested Array
+
+Use a double dot (`..`) in `q` when the field you want to match is inside an array on each object. The object matches when **any** item in that array matches.
+
+Suppose your silo data looks like this:
+
+```json data.json
+[
+  { "id": 1, "name": "Mug", "tags": [{ "label": "red" }] },
+  { "id": 2, "name": "Cap", "tags": [{ "label": "blue" }] },
+  { "id": 3, "name": "Bag", "tags": [{ "label": "green" }, { "label": "red" }] }
+]
+```
+
+Find objects that have a tag whose `label` is <u>equal to</u> `red`:
+
+```bash
+?q=tags..label&value=red&op=eq
+```
+
+Example Request:
+
+```bash
+GET https://[region-code].jsonsilo.com/[file-uuid]?q=tags..label&value=red&op=eq
+```
+
+Response:
+```json
+[
+  { "id": 1, "name": "Mug", "tags": [{ "label": "red" }] },
+  { "id": 3, "name": "Bag", "tags": [{ "label": "green" }, { "label": "red" }] }
+]
+```
+
+> **Note:** An object is returned once for each item in the array that matches. If two of an object's tags were `red`, that object would appear twice in the response.
+
+| Syntax | Meaning |
+|---|---|
+| `field` | A field on the object. |
+| `a.b` | Field `b` inside the nested object `a`. |
+| `a..b` | Field `b` on any item of the nested array `a`. |
 
 ## Combining parameter with `path`
 
@@ -170,7 +284,25 @@ Response:
 ```
 
 > **Notes:** 
-> - The order of parameters is important. The search parameters (`q`, `value`, `op`) should come before the `path` parameter in the URL.
-> - If no objects match the search criteria, the response will be an empty array.
 > - The `path` parameter can extract nested fields as well.
 > - When using the `path` parameter, ensure that the specified path exists in the matched objects to avoid `null` values in the response.
+
+## Response Format
+
+The shape of the response depends on how many objects match.
+
+| Matches | Response |
+|---|---|
+| Two or more | An array of the matching objects. |
+| Exactly one | The matching object on its own, not wrapped in an array. |
+| None | `404` |
+
+If your code expects a list, check whether the response is an array before you loop over it.
+
+## Caching
+
+Search results are cached for up to 5 minutes. A search made right after you update a silo may briefly return the previous data.
+
+## Rate Limits
+
+Searches count as private silo reads. See [Rate Limits](/rate-limits).

@@ -1,10 +1,18 @@
 ---
 title: Manage Keys
+description: 'Create and delete the keys that manage silos through the API'
 ---
 
 ## What is Manage Keys?
 
 A Manage Key allows you to perform operations like creating, reading, updating, and deleting JSON files through API calls, without needing to sign in to the console.
+
+Send the key in the `X-MAN-API` header:
+
+```bash Terminal
+curl -X GET "https://api.jsonsilo.com/api/v1/manage/silos" \
+     -H "X-MAN-API: YOUR_MANAGE_API_KEY"
+```
 
 For more information on using Manage Keys with the JSONsilo API, refer to our [API Reference Documentation](/api-reference/introduction).
 
@@ -13,79 +21,56 @@ For more information on using Manage Keys with the JSONsilo API, refer to our [A
 
 <Steps>
   <Step title="Go to the Keys Page">
-    Click on the "Keys" menu in the sidebar and then click the `Manage` button. 
-    
-    <img 
-      src="/images/keys/manage-key/1a.png" 
-      alt="quick start manage key"
-      className="rounded-lg"
-    />
+    Click **Keys** in the sidebar and select the **Manage keys** card.
+
+    <Frame><img src="/images/keys/manage-key/keys-screen.png" alt="Keys screen with the Manage keys card selected" /></Frame>
   </Step>
   <Step title="Generate a New Manage Key">
-    Click the `Create new Manage Key` button to generate a new Manage Key.
-
-    <img 
-      src="/images/keys/manage-key/1.png" 
-      alt="quick start manage key"
-      className="rounded-lg"
-    />
+    Click the `New manage key` button.
   </Step>
   <Step title="Set Key Details">
-    In the dialog, enter a name and select a duration for your Manage Key, then click the `Add key` button.
-    
-    <img 
-      src="/images/keys/manage-key/2.png" 
-      alt="quick start manage key"
-      className="rounded-lg"
-    />
+    In the dialog, enter a name and select a duration for your Manage Key, then click the `Create key` button.
+
+    The duration is how long the key stays valid: **1 month**, **3 months**, **6 months**, or **12 months**.
+
+    <Note>On the free trial and the legacy Free plan, Manage Keys last 1 month. Longer durations are available on the Basic and Pro plans.</Note>
   </Step>
   <Step title="Save the Manage Key">
-    Copy the Manage Key and store it securely.
+    The **Key created** dialog shows your key. Copy the Manage Key and store it securely.
+
+    Tick **I've stored this key somewhere safe**, then click `Done`.
 
     <Warning>Copy the key now, as you won't be able to see it again!</Warning>
-
-    <img 
-      src="/images/keys/manage-key/3.png" 
-      alt="quick start manage key"
-      className="rounded-lg"
-    />
   </Step>
 </Steps>
 
-## Revoking a Manage Key
+After that, the key is listed with its name, duration, expiry date, and the date it was created.
 
-To revoke a Manage Key, follow these steps:
+## When a Manage Key Expires
+
+A Manage Key stops working on its expiry date. Requests made with an expired key return `401` with the message `API Key Expired`.
+
+A key can't be extended. Create a new one before the old one expires, update your apps, and then delete the old key.
+
+## Deleting a Manage Key
+
+To delete a Manage Key, follow these steps:
 
 <Steps>
   <Step title="Go to the Keys Page">
-    Click on the "Keys" menu in the sidebar and then click the `Manage` button.
-
-    <img 
-      src="/images/keys/revoke-manage-key/1a.png" 
-      alt="quick start manage key"
-      className="rounded-lg"
-    />
-
+    Click **Keys** in the sidebar and select the **Manage keys** card.
   </Step>
-  <Step title="Revoke the Manage Key">
-    Find the Manage Key you want to revoke in the list and click the `Revoke` button next to it.
-
-    <img 
-      src="/images/keys/revoke-manage-key/1.png"
-      alt="revoke manage key"
-      className="rounded-lg"
-    />
+  <Step title="Delete the Manage Key">
+    Find the Manage Key you want to delete in the list and click the trash icon at the end of its row.
   </Step>
-  <Step title="Confirm Revocation">
-    In the confirmation dialog, enter the key name and click the `Delete` button to revoke the Manage Key.
-    
-    <img 
-      src="/images/keys/revoke-manage-key/2.png"
-      alt="revoke manage key"
-      className="rounded-lg"
-    />
+  <Step title="Confirm">
+    In the **Delete this key?** dialog, click the `Delete` button. The key stops working immediately, and this action can't be undone.
   </Step>
 </Steps>
+
+## Manage Keys and Schema Lock
+
+A Manage Key can replace a silo's data, but it can't change or remove a silo's schema. If a silo has a [locked schema](/features/schema-lock), an update that doesn't match it is rejected with `422`.
 
 ## Best Practices for Managing Manage Keys
 

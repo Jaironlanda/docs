@@ -1,0 +1,95 @@
+---
+title: 'Edit silos with an AI assistant'
+sidebarTitle: 'AI assistant workflows'
+description: 'Example prompts for Claude Code, Cursor, and VS Code with the JSONsilo MCP server.'
+icon: robot
+---
+
+Once an AI tool is connected to the [MCP server](/mcp/overview), you can work with your silos in plain language. This page collects prompts that work well and shows which [tools](/mcp/tools) the assistant uses behind the scenes.
+
+**You will use:** an [MCP Key](/keys/mcp-keys) and a connected client. See [Connect a Client](/mcp/connect-clients) to set one up.
+
+<Tip>Start with a **Read only** key. Create a **Read & write** key only when you want the assistant to change data.</Tip>
+
+## Explore your silos
+
+Works with a **Read only** key.
+
+| Prompt | Tools the assistant uses |
+|---|---|
+| "List my JSONsilo silos and tell me which one is the largest." | `list_silos` |
+| "Is the schema on my `app-config` silo locked?" | `list_silos`, `get_silo_meta` |
+| "Show me the schema of my `catalog` silo and explain each field." | `get_silo_schema` |
+| "Which products in `catalog` cost more than 20?" | `query_silo` with a `filters` condition |
+| "What's the name of the third product in `catalog`?" | `query_silo` with `idx` and `path` |
+
+For a large silo, the assistant gets a summary of its shape instead of the whole document, and then asks for just the part it needs. You don't have to do anything differently.
+
+## Make changes
+
+Needs a **Read & write** key.
+
+| Prompt | Tools the assistant uses |
+|---|---|
+| "Create a private silo called `feature-flags` with `{ "darkMode": false }`." | `create_silo` |
+| "Turn on `darkMode` in my `app-config` silo." | `patch_silo` |
+| "Add a `discount` field set to `0` to every product in `catalog`." | `patch_silo` |
+| "Rename the `test` silo to `staging-config`." | `update_silo` |
+| "Make my `catalog` silo private." | `update_silo` |
+
+For small changes, the assistant uses `patch_silo`, which sends [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) operations instead of the whole document. For example, turning on `darkMode` becomes:
+
+```json
+[{ "op": "replace", "path": "/features/darkMode", "value": true }]
+```
+
+A patch is all or nothing. If one operation fails, nothing is saved.
+
+## Walkthrough: seed a silo from your codebase
+
+A common job in Claude Code or Cursor is turning data that lives in your code into a silo your apps can read.
+
+<Steps>
+  <Step title="Ask the assistant to build and upload the data">
+    ```text
+    Read src/data/countries.ts and create a public JSONsilo silo called
+    "countries" in the sg-01-api region with that list as a JSON array.
+    Give me the public URL when you're done.
+    ```
+
+    The assistant reads the file, converts it to JSON, and calls `create_silo` with `is_public: true` and `region_name: "sg-01-api"`.
+  </Step>
+  <Step title="Point your code at the silo">
+    ```text
+    Replace the import of src/data/countries.ts with a fetch from that URL,
+    and fall back to an empty list if the request fails.
+    ```
+  </Step>
+  <Step title="Lock the shape in the console">
+    Open the new silo in the [console](https://console.jsonsilo.com), go to **Data & schema**, click `Enable`, and lock the schema. From now on, a write that changes the shape is rejected, whoever sends it. See [Schema Lock](/features/schema-lock).
+
+    <Note>An assistant can read a schema but can't create, change, or unlock one. Only you can, in the console.</Note>
+  </Step>
+</Steps>
+
+## Walkthrough: a safe bulk edit
+
+For changes that touch many values, ask the assistant to show you its plan first.
+
+```text
+In my "catalog" silo, I want to raise every price in the "bags" category
+by 10%, rounded to 2 decimals. First show me the before and after for each
+product. Don't change anything until I say "go".
+```
+
+After you approve, the assistant applies the change with one `patch_silo` call. If the silo has a locked schema and a new value doesn't fit, for example a price written as a string, the patch is rejected, nothing is saved, and the assistant is told which value was wrong so it can fix it.
+
+You can review every change it made in [Logs](/features/activity-logs), where MCP writes carry an **(MCP)** label.
+
+## Tips for good results
+
+- **Name the silo.** "my `catalog` silo" is clearer than "the product data".
+- **Ask for a plan before big changes**, as in the bulk edit above.
+- **Say the region and access** when creating a silo. Otherwise the assistant uses the defaults: private, in `api` (Germany).
+- **Give each tool its own key**, so you can remove one without affecting the others.
+- **Region changes happen in the console.** The MCP server can't move a silo to another region.

@@ -1,12 +1,44 @@
 ---
 title: Introduction
+description: 'Host a JSON document, read it from a URL, and keep it in shape.'
 ---
 
 ## What is JSONsilo.com?
 
-JSONsilo is a simple tool for developers to host and share their `.json` files online without any hassle. It provides a quick and reliable way to make your JSON data accessible over the internet.
+JSONsilo is a simple tool for developers to host and share their `.json` files online without any hassle. You store a JSON document in a **silo**, and JSONsilo gives you a URL you can read it from with a single `GET` request.
 
 ### Key Features:
-- **Easy Hosting**: Upload your JSON files and get a shareable link instantly.
+- **Easy Hosting**: Create a silo from pasted or uploaded JSON and get a URL instantly.
 - **No Setup Required**: No need to configure servers or worry about hosting.
-- **Secure and Reliable**: Your data is hosted securely and always available.
+- **Public or Private**: Serve a silo to anyone with the URL, or require an Access Key.
+- **3 Regions**: Host your silo in Germany, Singapore, or the United States.
+- **Query & Search**: Read part of a private silo with query parameters instead of downloading all of it.
+- **Schema Lock**: Attach a JSON Schema to a silo and reject any write that doesn't match it.
+- **MCP Server**: Let AI tools such as Claude Code, Cursor, and VS Code read and edit your silos.
+- **Manage API**: Create, update, and delete silos from your own code.
+
+## Where to start
+
+<Columns cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quick-start">
+    Create a key and a silo, then make your first request.
+  </Card>
+  <Card title="Console overview" icon="table-columns" href="/how-to/console-overview">
+    Find your way around the redesigned console.
+  </Card>
+  <Card title="Schema Lock" icon="shield-check" href="/features/schema-lock">
+    Protect the apps that read your silo from a bad write.
+  </Card>
+  <Card title="MCP Server" icon="robot" href="/mcp/overview">
+    Connect an AI tool to your silos.
+  </Card>
+  <Card title="Query & Search" icon="magnifying-glass" href="/features/query-silo-data">
+    Read only the part of a silo you need.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Manage silos programmatically with a Manage Key.
+  </Card>
+  <Card title="Examples" icon="flask" href="/examples/overview">
+    Copy-paste recipes for remote config, backends, CI, and AI tools.
+  </Card>
+</Columns>

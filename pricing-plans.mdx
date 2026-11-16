@@ -4,3 +4,46 @@ description: Overview of JSONsilo pricing plans
 ---
 
 Please visit our [Pricing Page](https://jsonsilo.com/#pricing) for the most up-to-date information on our pricing plans.
+
+## What each plan includes
+
+| | Free trial | Basic | Pro |
+|---|---|---|---|
+| Silos | 6 | 6 | 111 |
+| Size per silo | 5 MB | 5 MB | 10 MB |
+| Regions | 3 | 3 | 3 |
+| Requests | 1,000 in total | 1,000,000 per day | 10,000,000 per day |
+| [Query](/features/query-silo-data) and [Search](/features/search-silo-data) | Yes | Yes | Yes |
+| [Schema Lock](/features/schema-lock) | Yes | Yes | Yes |
+| [MCP Server](/mcp/overview) | Yes | Yes | Yes |
+| [Analytics](/features/analytics) history | 2 days | 7 days | 30 days |
+| [Manage Key](/keys/manage-keys) and [MCP Key](/keys/mcp-keys) duration | 1 month | Up to 12 months | Up to 12 months |
+
+See [Rate Limits](/rate-limits) for how request limits are counted.
+
+## Free trial
+
+Every new account starts on a free trial with full access, so you can try the paid features before you choose a plan.
+
+The trial ends after **2 days** or **1,000 requests**, whichever comes first.
+
+- Requests to your silo URLs, the Manage API, and MCP tool calls count towards the 1,000 requests. Using the console does not.
+- The sidebar shows **Trial requests left** and **Trial time left** while the trial is active.
+- When the trial ends, requests to your silos return `402` until you choose a plan. See [Rate Limits](/rate-limits#when-the-trial-ends).
+- Your silos carry over when you pick a plan.
+
+To choose a plan, open **Billing** in the console. See [Change Plan](/billing/upgrade-plan).
+
+## Legacy plans
+
+<Note>These plans are no longer offered to new accounts. If your account is already on one, it keeps working as before.</Note>
+
+| | Free | Pro Plus | Lifetime |
+|---|---|---|---|
+| Silos | 1 | 111 | 111 |
+| Size per silo | 1 MB | 20 MB | 20 MB |
+| Regions | Germany only | 3 | 3 |
+| Requests per day | 1,000 | 10,000,000 | 10,000,000 |
+| Schema Lock | No | Yes | Yes |
+| MCP Server | No | Yes | Yes |
+| Analytics history | Not included | 30 days | 30 days |

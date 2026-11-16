@@ -1,0 +1,256 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "JSONsilo.com",
+  "description": "Guides and API reference for JSONsilo: host JSON, read it from a URL, lock its schema, and connect AI tools over MCP.",
+  "colors": {
+    "primary": "#3451d1",
+    "light": "#a9b6f2",
+    "dark": "#3451d1"
+  },
+  "background": {
+    "color": {
+      "light": "#f6f6f4",
+      "dark": "#16161a"
+    }
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "styling": {
+    "codeblocks": "dark"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://jsonsilo.com"
+  },
+  "favicon": "/logo/mark.png",
+  "contextual": {
+    "options": ["copy", "view", "claude", "chatgpt", "perplexity", "mcp", "cursor", "vscode"]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:hello@jsonsilo.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://console.jsonsilo.com"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Get Started",
+            "icon": "play",
+            "pages": [
+              "introduction",
+              "quick-start",
+              "key-concepts",
+              "regions",
+              "pricing-plans",
+              "rate-limits"
+            ]
+          },
+          {
+            "group": "How-To Guides",
+            "icon": "lightbulb",
+            "pages": [
+              "how-to/console-overview",
+              "how-to/create-silo",
+              "how-to/manage-silo",
+              "how-to/update-silo",
+              "how-to/delete-silo"
+            ]
+          },
+          {
+            "group": "Silo Types",
+            "icon": "database",
+            "pages": [
+              "silo-types/private-silo",
+              "silo-types/public-silo"
+            ]
+          },
+          {
+            "group": "Features",
+            "icon": "star",
+            "pages": [
+              "features/query-silo-data",
+              "features/search-silo-data",
+              "features/schema-lock",
+              "features/analytics",
+              "features/activity-logs"
+            ]
+          },
+          {
+            "group": "MCP",
+            "icon": "robot",
+            "pages": [
+              "mcp/overview",
+              "mcp/connect-clients",
+              "mcp/tools"
+            ]
+          },
+          {
+            "group": "Keys",
+            "icon": "key",
+            "pages": [
+              "keys/access-keys",
+              "keys/manage-keys",
+              "keys/mcp-keys"
+            ]
+          },
+          {
+            "group": "Editor",
+            "icon": "pencil",
+            "pages": [
+              "editor/json-editor"
+            ]
+          },
+          {
+            "group": "Billing",
+            "icon": "credit-card",
+            "pages": [
+              "billing/upgrade-plan",
+              "billing/cancel-subscription"
+            ]
+          },
+          {
+            "group": "FAQ",
+            "icon": "gear",
+            "pages": [
+              "faq/general",
+              "faq/billing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "icon": "flask",
+        "groups": [
+          {
+            "group": "Examples",
+            "pages": [
+              "examples/overview"
+            ]
+          },
+          {
+            "group": "Reading Data",
+            "icon": "book-open-reader",
+            "pages": [
+              "examples/remote-config",
+              "examples/private-backend",
+              "examples/product-catalog"
+            ]
+          },
+          {
+            "group": "Writing Data",
+            "icon": "pen-to-square",
+            "pages": [
+              "examples/sync-from-code"
+            ]
+          },
+          {
+            "group": "AI Tools",
+            "icon": "robot",
+            "pages": [
+              "examples/mcp-workflows"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Endpoint Examples",
+            "pages": [
+              "api-reference/endpoint/create-silo",
+              "api-reference/endpoint/delete-silo",
+              "api-reference/endpoint/get-meta",
+              "api-reference/endpoint/get-silo",
+              "api-reference/endpoint/get-silo-list",
+              "api-reference/endpoint/patch-silo"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "icon": "clock-rotate-left",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog/update"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/jaironlanda",
+      "github": "https://github.com/jaironlanda",
+      "linkedin": "https://linkedin.com/jaironlanda"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/how-to/query-silo",
+      "destination": "/features/query-silo-data"
+    },
+    {
+      "source": "/how-to/search-silo",
+      "destination": "/features/search-silo-data"
+    },
+    {
+      "source": "/how-to/manage/private-silo-access",
+      "destination": "/silo-types/private-silo"
+    },
+    {
+      "source": "/how-to/manage/public-silo-access",
+      "destination": "/silo-types/public-silo"
+    },
+    {
+      "source": "/how-to/manage/region",
+      "destination": "/regions"
+    },
+    {
+      "source": "/how-to/view-silo",
+      "destination": "/how-to/manage-silo"
+    },
+    {
+      "source": "/public-silo-vs-private-silo",
+      "destination": "/key-concepts"
+    },
+    {
+      "source": "/access-key-vs-manage-key",
+      "destination": "/key-concepts"
+    },
+    {
+      "source": "/silo-types/demo",
+      "destination": "/examples/overview"
+    }
+  ]
+}
